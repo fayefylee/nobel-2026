@@ -164,7 +164,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <p class="meta" id="meta"></p>
 <div class="people" id="people"></div>
 <div class="tools"><button data-a="big">大字看板</button><button data-a="fs">全螢幕</button><button data-a="share">分享</button><button data-a="edit" id="editBtn" hidden>編輯日程</button></div>
-<div class="share" id="sharep" hidden><button data-a="copy">複製文字（貼到 LINE）</button><button data-a="txt" class="cl-only">下載文字檔</button><button data-a="html" class="cl-only">下載網頁檔</button><button data-a="pdf">下載 PDF</button></div>
+<div class="share" id="sharep" hidden><button data-a="copy">複製文字（貼到 LINE）</button><button data-a="txt" class="cl-only">下載文字檔</button><button data-a="html" class="cl-only">下載網頁檔</button><button data-a="pdf1">下載這一天 PDF</button><button data-a="pdf">下載全部 PDF</button></div>
 <div class="tabs" id="tabs"></div>
 <div id="list"></div>
 <div id="todo"></div>
@@ -294,17 +294,17 @@ function toHtml(){var css=$("css").textContent,b='<h1>'+esc(S.title)+'</h1><div 
 S.days.forEach(function(d){var m=meta(d.date);b+='<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'')+'<div>'+(d.items.length?d.items.map(itemHtml).join(""):'<div class="empty">尚未排定行程</div>')+'</div>'});
 b+=todoHtml()+'<div class="upd">最後更新 '+esc(S.upd)+'</div>';
 return'<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+esc(S.title)+'</title><style>'+css+'</style></head><body><div class="wrap"><div class="card">'+b+'</div></div></body></html>'}
-function docBody(){var b='<h1>'+esc(S.title)+'</h1><div class="people">'+peopleHtml()+'</div>';
-S.days.forEach(function(d){var m=meta(d.date);b+='<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'')+'<div>'+(d.items.length?d.items.map(itemHtml).join(""):'<div class="empty">尚未排定行程</div>')+'</div>'});
+function docBody(only){var one=typeof only==="number"&&S.days[only],b='<h1>'+esc(one&&one.title||S.title)+'</h1><div class="people">'+peopleHtml()+'</div>';
+(one?[one]:S.days).forEach(function(d){var m=meta(d.date);b+='<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'')+'<div>'+(d.items.length?d.items.map(itemHtml).join(""):'<div class="empty">尚未排定行程</div>')+'</div>'});
 return b+todoHtml()+'<div class="upd">最後更新 '+esc(S.upd)+'</div>'}
 function loadJs(u){return new Promise(function(ok,no){var s=document.createElement("script");s.src=u;s.onload=ok;s.onerror=function(){no(new Error("load"))};document.head.appendChild(s)})}
 var pdfBusy=false;
-async function makePdf(){
+async function makePdf(only){
 if(pdfBusy)return;pdfBusy=true;toast("正在產生 PDF…");var host=null;
 try{
 if(!window.html2canvas)await loadJs("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
 if(!(window.jspdf&&window.jspdf.jsPDF))await loadJs("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
-host=document.createElement("div");host.className="pdfhost";host.innerHTML='<div class="card">'+docBody()+'</div>';document.body.appendChild(host);
+host=document.createElement("div");host.className="pdfhost";host.innerHTML='<div class="card">'+docBody(only)+'</div>';document.body.appendChild(host);
 try{await document.fonts.ready}catch(x){}
 var SC=2,hr=host.getBoundingClientRect(),cuts=[];
 host.querySelectorAll(".item").forEach(function(e){cuts.push(Math.round((e.getBoundingClientRect().bottom-hr.top)*SC))});
@@ -315,7 +315,7 @@ var W=cv.width,H=cv.height,PH=Math.floor(W*277/190),pdf=new window.jspdf.jsPDF({
 while(y<H){var end=Math.min(y+PH,H);if(end<H){var best=0;for(var i=0;i<cuts.length;i++){if(cuts[i]>y+PH*0.35&&cuts[i]<=y+PH)best=cuts[i]}if(best)end=best}
 var sl=document.createElement("canvas");sl.width=W;sl.height=end-y;var cx=sl.getContext("2d");cx.fillStyle="#f6f5f1";cx.fillRect(0,0,W,sl.height);cx.drawImage(cv,0,y,W,end-y,0,0,W,end-y);
 if(!first)pdf.addPage();first=false;pdf.addImage(sl.toDataURL("image/jpeg",0.92),"JPEG",10,10,190,(end-y)*190/W);y=end}
-var blob=pdf.output("blob"),name="諾貝爾講座日程.pdf",d=window.claude&&await window.claude.use("downloads");
+var blob=pdf.output("blob"),name="諾貝爾講座日程"+(typeof only==="number"&&S.days[only]?"_"+meta(S.days[only].date).tab.replace("/","-"):"")+".pdf",d=window.claude&&await window.claude.use("downloads");
 if(d){await d.save({filename:name,data:blob});toast("PDF 已儲存")}
 else{var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},4000);toast("已下載 PDF")}
 }catch(e){if(!e||e.code!=="declined")toast("PDF 產生失敗，請稍後再試")}
@@ -337,6 +337,7 @@ case"share":$("sharep").hidden=!$("sharep").hidden;break;
 case"copy":copyText();break;
 case"txt":dl("諾貝爾講座日程.txt",toText());break;
 case"pdf":makePdf();break;
+case"pdf1":makePdf(cur);break;
 case"html":dl("諾貝爾講座日程.html",toHtml());break;
 case"closemodal":$("modal").hidden=true;break;
 case"day":cur=i;show();break;
