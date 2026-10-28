@@ -51,6 +51,8 @@ h1.sp{color:var(--sp)}
 .t .tent{color:var(--warn);font-weight:400}
 .t span.pa{color:var(--pa);font-weight:700}
 .t span.pb{color:var(--warn);font-weight:700}
+.t span.pa,.t span.pb{display:block}
+.t span.pre{display:inline}
 .d{color:var(--mute);margin-top:2px;font-size:.82rem;white-space:pre-line}
 .d .spk{color:var(--spk);font-weight:600}
 .d .dpa{color:var(--pa);font-weight:700}
@@ -240,7 +242,7 @@ function toast(t){var e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(t
 function fill(v){var o=clone(DEFAULT);if(v&&typeof v==="object"){["title","speaker","host","upd"].forEach(function(k){if(typeof v[k]==="string")o[k]=v[k]});if(Array.isArray(v.todo))o.todo=v.todo.slice();if(Array.isArray(v.days))o.days=clone(v.days).map(function(d){d.items=Array.isArray(d.items)?d.items:[];return d})}return o}
 function dh(s){return String(s).split("\n").map(function(l){return /^(主講|致歡迎詞)/.test(l)?'<span class="spk">'+esc(l)+'</span>':/^Plan A/.test(l)?'<span class="dpa">'+esc(l)+'</span>':/^Plan B/.test(l)?'<span class="dpb">'+esc(l)+'</span>':esc(l)}).join("\n")}
 function itemHtml(it){
-return '<div class="item '+esc(it.cls||"")+'"><div class="time">'+esc(it.time)+(it.tag?'<em>'+esc(it.tag)+'</em>':'')+'</div><div class="dot"></div><div class="body"><div class="ico">'+esc(it.ico||"")+'</div><div><div class="t">'+(it.pre?'<span class="'+(/^Plan B/.test(it.pre)?'pb':'pa')+'">'+esc(it.pre)+'</span> ':'')+esc(it.title)+(it.tent?' <span class="tent">'+esc(it.tent)+'</span>':'')+(it.sub?' <span'+(/^Plan A/.test(it.sub)?' class="pa"':/^Plan B/.test(it.sub)?' class="pb"':'')+'>'+esc(it.sub)+'</span>':'')+'</div>'+(it.desc?'<div class="d">'+dh(it.desc)+'</div>':'')+'</div></div></div>'}
+return '<div class="item '+esc(it.cls||"")+'"><div class="time">'+esc(it.time)+(it.tag?'<em>'+esc(it.tag)+'</em>':'')+'</div><div class="dot"></div><div class="body"><div class="ico">'+esc(it.ico||"")+'</div><div><div class="t">'+(it.pre?'<span class="'+(/^Plan B/.test(it.pre)?'pb':'pa')+' pre">'+esc(it.pre)+'</span> ':'')+esc(it.title)+(it.tent?' <span class="tent">'+esc(it.tent)+'</span>':'')+(it.sub?' <span'+(/^Plan A/.test(it.sub)?' class="pa"':/^Plan B/.test(it.sub)?' class="pb"':'')+'>'+esc(it.sub)+'</span>':'')+'</div>'+(it.desc?'<div class="d">'+dh(it.desc)+'</div>':'')+'</div></div></div>'}
 function peopleHtml(){return '<div><b>主講人：</b>'+esc(S.speaker)+'</div><div><b>主持人：</b>'+esc(S.host)+'</div>'}
 function todoHtml(){return S.todo.length?'<div class="todo"><h3>待確認</h3><ul>'+S.todo.map(function(x){return'<li>'+esc(x)+'</li>'}).join("")+'</ul></div>':''}
 function renderView(){
