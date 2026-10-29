@@ -63,6 +63,8 @@ h1.sp{color:var(--sp)}
 .pdfhost{position:fixed;left:-10000px;top:0;width:760px;box-sizing:border-box;--bg:#f1efea;--card:#f6f5f1;--ink:#2b2b2b;--mute:#6f6e69;--line:#cfccc3;--accent:#3d5a87;--accent-ink:#fff;--warn:#b5662f;--hl:#e8e5dc;--main:#d8e1ee;--tab:#fff;--input:#fff;--sp:#b3261e;--spk:#0b7a5a;--alt-bg:#f6e3d0;--pa:#7a3db8;--pa-bg:#eadcf7;background:#f6f5f1;color:var(--ink);line-height:1.5}
 .pdfhost .card{border:0;border-radius:0}
 .pdfhost.land{width:1100px}
+.lcols{display:flex;gap:22px;align-items:flex-start}
+.lc{flex:1;min-width:0}
 .upd{text-align:right;color:var(--mute);font-size:.85rem;margin-top:14px}
 .dh{margin:26px 0 8px;font-size:1.1rem;border-bottom:2px solid var(--accent);padding-bottom:4px}
 .big .t{font-size:1.5rem}.big .d{font-size:1.2rem}.big .time{font-size:1.05rem}.big .item{grid-template-columns:130px 14px 1fr}
@@ -300,7 +302,49 @@ function docBody(only){var one=typeof only==="number"&&S.days[only],b='<h1>'+esc
 return b+todoHtml()+'<div class="upd">最後更新 '+esc(S.upd)+'</div>'}
 function loadJs(u){return new Promise(function(ok,no){var s=document.createElement("script");s.src=u;s.onload=ok;s.onerror=function(){no(new Error("load"))};document.head.appendChild(s)})}
 var pdfBusy=false;
+async function makePdfLand(only){
+if(pdfBusy)return;pdfBusy=true;toast("正在產生 PDF…");var hosts=[];
+try{
+if(!window.html2canvas)await loadJs("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+if(!(window.jspdf&&window.jspdf.jsPDF))await loadJs("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+try{await document.fonts.ready}catch(x){}
+var SC=2,HW=1100,PX=18,PY=24,GAP=22,CW=Math.floor((HW-2*PX-GAP)/2),PHPX=Math.floor(HW*190/277);
+function mk(html,w){var h=document.createElement("div");h.className="pdfhost";h.style.width=w+"px";h.innerHTML=html;document.body.appendChild(h);hosts.push(h);return h}
+function rm(h){h.remove();var k=hosts.indexOf(h);if(k>=0)hosts.splice(k,1)}
+var one=typeof only==="number"&&S.days[only],days=one?[one]:S.days;
+var topHtml='<h1>'+esc(one&&one.title||S.title)+'</h1><div class="people">'+peopleHtml()+'</div>';
+var tailHtml=todoHtml()+'<div class="upd">最後更新 '+esc(S.upd)+'</div>';
+var wrap='<div class="card" style="padding:'+PY+'px '+PX+'px;display:flow-root">';
+var hm=mk(wrap+'<div id="hm" style="display:flow-root">'+topHtml+'</div></div>',HW),topH=hm.querySelector("#hm").getBoundingClientRect().height;rm(hm);
+hm=mk(wrap+'<div id="hm" style="display:flow-root">'+tailHtml+'</div></div>',HW);var tailH=hm.querySelector("#hm").getBoundingClientRect().height+10;rm(hm);
+var pdf=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"landscape"}),firstPdf=true,pageNo=0;
+for(var di=0;di<days.length;di++){
+var d=days[di],m=meta(d.date),last=di===days.length-1;
+var dhh='<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'');
+hm=mk(wrap+'<div id="hm" style="display:flow-root">'+dhh+'</div></div>',HW);var dhH=hm.querySelector("#hm").getBoundingClientRect().height;rm(hm);
+var its=d.items||[],hs=[];
+if(its.length){hm=mk(wrap+'<div style="width:'+CW+'px">'+its.map(itemHtml).join("")+'</div></div>',HW);hm.querySelectorAll(".item").forEach(function(e){hs.push(e.getBoundingClientRect().height)});rm(hm)}
+var pgs=[],pg=null,c=0;
+function np(){var f=pageNo===0&&pgs.length===0;pg={L:[],R:[],lh:0,rh:0,col:0,f:f};pgs.push(pg);c=PHPX-2*PY-dhH-(f?topH:0)-(last?tailH:0)}
+np();
+for(var i=0;i<its.length;i++){var h=hs[i],html=itemHtml(its[i]);
+if(pg.col===0&&pg.L.length&&pg.lh+h>c)pg.col=1;
+if(pg.col===1&&pg.R.length&&pg.rh+h>c){np()}
+if(pg.col===0){pg.L.push(html);pg.lh+=h}else{pg.R.push(html);pg.rh+=h}}
+for(var p=0;p<pgs.length;p++){var g=pgs[p],isLast=last&&p===pgs.length-1;
+var body=(g.f?topHtml:'')+dhh+(its.length?'<div class="lcols"><div class="lc">'+g.L.join("")+'</div><div class="lc">'+g.R.join("")+'</div></div>':'<div class="empty">尚未排定行程</div>')+(isLast?tailHtml:'');
+var host=mk(wrap+body+'</div>',HW);
+var cv=await window.html2canvas(host,{scale:SC,backgroundColor:"#f6f5f1",useCORS:true,logging:false});rm(host);
+var w=277,hh=cv.height*277/cv.width;if(hh>190){hh=190;w=cv.width*190/cv.height}
+if(!firstPdf)pdf.addPage();firstPdf=false;pageNo++;
+pdf.addImage(cv.toDataURL("image/jpeg",0.92),"JPEG",10,10,w,hh)}}
+var blob=pdf.output("blob"),name="諾貝爾講座日程_橫式"+(one?"_"+meta(one.date).tab.replace("/","-"):"")+".pdf",dd=window.claude&&await window.claude.use("downloads");
+if(dd){await dd.save({filename:name,data:blob});toast("PDF 已儲存")}
+else{var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},4000);toast("已下載 PDF")}
+}catch(e){if(!e||e.code!=="declined")toast("PDF 產生失敗，請稍後再試")}
+finally{hosts.forEach(function(h){h.remove()});pdfBusy=false}}
 async function makePdf(only){
+if($("pdfland")&&$("pdfland").checked)return makePdfLand(only);
 if(pdfBusy)return;pdfBusy=true;toast("正在產生 PDF…");var host=null;
 try{
 if(!window.html2canvas)await loadJs("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
