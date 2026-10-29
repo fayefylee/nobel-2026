@@ -62,6 +62,7 @@ h1.sp{color:var(--sp)}
 .todo ul{margin:0;padding-left:20px;font-size:.95rem}
 .pdfhost{position:fixed;left:-10000px;top:0;width:760px;box-sizing:border-box;--bg:#f1efea;--card:#f6f5f1;--ink:#2b2b2b;--mute:#6f6e69;--line:#cfccc3;--accent:#3d5a87;--accent-ink:#fff;--warn:#b5662f;--hl:#e8e5dc;--main:#d8e1ee;--tab:#fff;--input:#fff;--sp:#b3261e;--spk:#0b7a5a;--alt-bg:#f6e3d0;--pa:#7a3db8;--pa-bg:#eadcf7;background:#f6f5f1;color:var(--ink);line-height:1.5}
 .pdfhost .card{border:0;border-radius:0}
+.pdfhost.land{width:1100px}
 .upd{text-align:right;color:var(--mute);font-size:.85rem;margin-top:14px}
 .dh{margin:26px 0 8px;font-size:1.1rem;border-bottom:2px solid var(--accent);padding-bottom:4px}
 .big .t{font-size:1.5rem}.big .d{font-size:1.2rem}.big .time{font-size:1.05rem}.big .item{grid-template-columns:130px 14px 1fr}
@@ -164,7 +165,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <p class="meta" id="meta"></p>
 <div class="people" id="people"></div>
 <div class="tools"><button data-a="big">大字看板</button><button data-a="fs">全螢幕</button><button data-a="share">分享</button><button data-a="edit" id="editBtn" hidden>編輯日程</button></div>
-<div class="share" id="sharep" hidden><button data-a="copy">複製文字（貼到 LINE）</button><button data-a="txt" class="cl-only">下載文字檔</button><button data-a="html" class="cl-only">下載網頁檔</button><button data-a="pdf1">下載這一天 PDF</button><button data-a="pdf">下載全部 PDF</button></div>
+<div class="share" id="sharep" hidden><button data-a="copy">複製文字（貼到 LINE）</button><button data-a="txt" class="cl-only">下載文字檔</button><button data-a="html" class="cl-only">下載網頁檔</button><button data-a="pdf1">下載這一天 PDF</button><button data-a="pdf">下載全部 PDF</button><label style="display:inline-flex;align-items:center;gap:4px;font-size:13px;padding:0 6px"><input type="checkbox" id="pdfland">橫式（A4 橫向）</label></div>
 <div class="tabs" id="tabs"></div>
 <div id="list"></div>
 <div id="todo"></div>
@@ -304,18 +305,18 @@ if(pdfBusy)return;pdfBusy=true;toast("正在產生 PDF…");var host=null;
 try{
 if(!window.html2canvas)await loadJs("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
 if(!(window.jspdf&&window.jspdf.jsPDF))await loadJs("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
-host=document.createElement("div");host.className="pdfhost";host.innerHTML='<div class="card">'+docBody(only)+'</div>';document.body.appendChild(host);
+host=document.createElement("div");var land=!!($("pdfland")&&$("pdfland").checked);host.className="pdfhost"+(land?" land":"");host.innerHTML='<div class="card">'+docBody(only)+'</div>';document.body.appendChild(host);
 try{await document.fonts.ready}catch(x){}
 var SC=2,hr=host.getBoundingClientRect(),cuts=[];
 host.querySelectorAll(".item").forEach(function(e){cuts.push(Math.round((e.getBoundingClientRect().bottom-hr.top)*SC))});
 host.querySelectorAll(".dh").forEach(function(e){cuts.push(Math.round((e.getBoundingClientRect().top-hr.top)*SC))});
 cuts.sort(function(a,b){return a-b});
 var cv=await window.html2canvas(host,{scale:SC,backgroundColor:"#f6f5f1",useCORS:true,logging:false});
-var W=cv.width,H=cv.height,PH=Math.floor(W*277/190),pdf=new window.jspdf.jsPDF({unit:"mm",format:"a4"}),y=0,first=true;
+var W=cv.width,H=cv.height,PW=land?277:190,PH=Math.floor(W*(land?190:277)/PW),pdf=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:land?"landscape":"portrait"}),y=0,first=true;
 while(y<H){var end=Math.min(y+PH,H);if(end<H){var best=0;for(var i=0;i<cuts.length;i++){if(cuts[i]>y+PH*0.35&&cuts[i]<=y+PH)best=cuts[i]}if(best)end=best}
 var sl=document.createElement("canvas");sl.width=W;sl.height=end-y;var cx=sl.getContext("2d");cx.fillStyle="#f6f5f1";cx.fillRect(0,0,W,sl.height);cx.drawImage(cv,0,y,W,end-y,0,0,W,end-y);
-if(!first)pdf.addPage();first=false;pdf.addImage(sl.toDataURL("image/jpeg",0.92),"JPEG",10,10,190,(end-y)*190/W);y=end}
-var blob=pdf.output("blob"),name="諾貝爾講座日程"+(typeof only==="number"&&S.days[only]?"_"+meta(S.days[only].date).tab.replace("/","-"):"")+".pdf",d=window.claude&&await window.claude.use("downloads");
+if(!first)pdf.addPage();first=false;pdf.addImage(sl.toDataURL("image/jpeg",0.92),"JPEG",10,10,PW,(end-y)*PW/W);y=end}
+var blob=pdf.output("blob"),name="諾貝爾講座日程"+(land?"_橫式":"")+(typeof only==="number"&&S.days[only]?"_"+meta(S.days[only].date).tab.replace("/","-"):"")+".pdf",d=window.claude&&await window.claude.use("downloads");
 if(d){await d.save({filename:name,data:blob});toast("PDF 已儲存")}
 else{var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},4000);toast("已下載 PDF")}
 }catch(e){if(!e||e.code!=="declined")toast("PDF 產生失敗，請稍後再試")}
