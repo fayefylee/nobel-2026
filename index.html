@@ -65,6 +65,20 @@ h1.sp{color:var(--sp)}
 .pdfhost.land{width:1100px}
 .lcols{display:flex;gap:22px;align-items:flex-start}
 .lc{flex:1;min-width:0}
+.cp h1{font-size:1.25rem;margin:0 0 2px}
+.cp .people{display:flex;justify-content:center;gap:18px;font-size:.72rem;margin-bottom:2px}
+.cp .dh{margin:8px 0 6px;font-size:.95rem}
+.cp .meta{font-size:.75rem;margin:0 0 6px}
+.cp .item{grid-template-columns:78px 12px 1fr;gap:6px;padding:4px 6px}
+.cp .time{font-size:.68rem;padding-top:2px}
+.cp .time em{font-size:.62rem}
+.cp .dot::after{top:5px;width:9px;height:9px;margin-left:-4.5px}
+.cp .body{gap:6px}
+.cp .ico{font-size:.85rem;line-height:1.4}
+.cp .t{font-size:.76rem;line-height:1.35}
+.cp .d{font-size:.66rem;margin-top:1px;line-height:1.35}
+.cp .upd{font-size:.65rem;margin-top:6px}
+.cp .todo{margin-top:8px;padding:6px 10px}
 .upd{text-align:right;color:var(--mute);font-size:.85rem;margin-top:14px}
 .dh{margin:26px 0 8px;font-size:1.1rem;border-bottom:2px solid var(--accent);padding-bottom:4px}
 .big .t{font-size:1.5rem}.big .d{font-size:1.2rem}.big .time{font-size:1.05rem}.big .item{grid-template-columns:130px 14px 1fr}
@@ -308,39 +322,31 @@ try{
 if(!window.html2canvas)await loadJs("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
 if(!(window.jspdf&&window.jspdf.jsPDF))await loadJs("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
 try{await document.fonts.ready}catch(x){}
-var SC=2,HW=1100,PX=18,PY=24,GAP=22,CW=Math.floor((HW-2*PX-GAP)/2),PHPX=Math.floor(HW*190/277);
-function mk(html,w){var h=document.createElement("div");h.className="pdfhost";h.style.width=w+"px";h.innerHTML=html;document.body.appendChild(h);hosts.push(h);return h}
+var SC=2,HW=1100,PX=18,PY=14,GAP=22,CW=Math.floor((HW-2*PX-GAP)/2);
+function mk(html){var h=document.createElement("div");h.className="pdfhost cp";h.style.width=HW+"px";h.innerHTML=html;document.body.appendChild(h);hosts.push(h);return h}
 function rm(h){h.remove();var k=hosts.indexOf(h);if(k>=0)hosts.splice(k,1)}
 var one=typeof only==="number"&&S.days[only],days=one?[one]:S.days;
 var topHtml='<h1>'+esc(one&&one.title||S.title)+'</h1><div class="people">'+peopleHtml()+'</div>';
 var tailHtml=todoHtml()+'<div class="upd">最後更新 '+esc(S.upd)+'</div>';
 var wrap='<div class="card" style="padding:'+PY+'px '+PX+'px;display:flow-root">';
-var hm=mk(wrap+'<div id="hm" style="display:flow-root">'+topHtml+'</div></div>',HW),topH=hm.querySelector("#hm").getBoundingClientRect().height;rm(hm);
-hm=mk(wrap+'<div id="hm" style="display:flow-root">'+tailHtml+'</div></div>',HW);var tailH=hm.querySelector("#hm").getBoundingClientRect().height+10;rm(hm);
-var pdf=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"landscape"}),firstPdf=true,pageNo=0;
+var pdf=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"landscape"}),firstPdf=true;
 for(var di=0;di<days.length;di++){
 var d=days[di],m=meta(d.date),last=di===days.length-1;
 var dhh='<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'');
-hm=mk(wrap+'<div id="hm" style="display:flow-root">'+dhh+'</div></div>',HW);var dhH=hm.querySelector("#hm").getBoundingClientRect().height;rm(hm);
 var its=d.items||[],hs=[];
-if(its.length){hm=mk(wrap+'<div style="width:'+CW+'px">'+its.map(itemHtml).join("")+'</div></div>',HW);hm.querySelectorAll(".item").forEach(function(e){hs.push(e.getBoundingClientRect().height)});rm(hm)}
-var pgs=[],pg=null,c=0;
-function np(){var f=pageNo===0&&pgs.length===0;pg={L:[],R:[],lh:0,rh:0,col:0,f:f};pgs.push(pg);c=PHPX-2*PY-dhH-(f?topH:0)-(last?tailH:0)}
-np();
-for(var i=0;i<its.length;i++){var h=hs[i],html=itemHtml(its[i]);
-if(pg.col===0&&pg.L.length&&pg.lh+h>c)pg.col=1;
-if(pg.col===1&&pg.R.length&&pg.rh+h>c){np()}
-if(pg.col===0){pg.L.push(html);pg.lh+=h}else{pg.R.push(html);pg.rh+=h}}
-for(var p=0;p<pgs.length;p++){var g=pgs[p],isLast=last&&p===pgs.length-1;
-var body=(g.f?topHtml:'')+dhh+(its.length?'<div class="lcols"><div class="lc">'+g.L.join("")+'</div><div class="lc">'+g.R.join("")+'</div></div>':'<div class="empty">尚未排定行程</div>')+(isLast?tailHtml:'');
-var host=mk(wrap+body+'</div>',HW);
+if(its.length){var hm=mk(wrap+'<div style="width:'+CW+'px">'+its.map(itemHtml).join("")+'</div></div>');hm.querySelectorAll(".item").forEach(function(e){hs.push(e.getBoundingClientRect().height)});rm(hm)}
+var best=0,bm=1e12;
+for(var k=0;k<=its.length;k++){var a=0,b=0;for(var j=0;j<its.length;j++){if(j<k)a+=hs[j];else b+=hs[j]}var mx=Math.max(a,b);if(mx<bm){bm=mx;best=k}}
+var L=its.slice(0,best).map(itemHtml).join(""),R=its.slice(best).map(itemHtml).join("");
+var body=(di===0?topHtml:'')+dhh+(its.length?'<div class="lcols"><div class="lc">'+L+'</div><div class="lc">'+R+'</div></div>':'<div class="empty">尚未排定行程</div>')+(last?tailHtml:'');
+var host=mk(wrap+body+'</div>');
 var cv=await window.html2canvas(host,{scale:SC,backgroundColor:"#f6f5f1",useCORS:true,logging:false});rm(host);
 var w=277,hh=cv.height*277/cv.width;if(hh>190){hh=190;w=cv.width*190/cv.height}
-if(!firstPdf)pdf.addPage();firstPdf=false;pageNo++;
-pdf.addImage(cv.toDataURL("image/jpeg",0.92),"JPEG",10,10,w,hh)}}
+if(!firstPdf)pdf.addPage();firstPdf=false;
+pdf.addImage(cv.toDataURL("image/jpeg",0.92),"JPEG",10,10,w,hh)}
 var blob=pdf.output("blob"),name="諾貝爾講座日程_橫式"+(one?"_"+meta(one.date).tab.replace("/","-"):"")+".pdf",dd=window.claude&&await window.claude.use("downloads");
 if(dd){await dd.save({filename:name,data:blob});toast("PDF 已儲存")}
-else{var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},4000);toast("已下載 PDF")}
+else{var a2=document.createElement("a");a2.href=URL.createObjectURL(blob);a2.download=name;document.body.appendChild(a2);a2.click();setTimeout(function(){URL.revokeObjectURL(a2.href);a2.remove()},4000);toast("已下載 PDF")}
 }catch(e){if(!e||e.code!=="declined")toast("PDF 產生失敗，請稍後再試")}
 finally{hosts.forEach(function(h){h.remove()});pdfBusy=false}}
 async function makePdf(only){
