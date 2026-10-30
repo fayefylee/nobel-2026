@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>諾貝爾講座邀請函</title>
+<meta name="description" content="國立中興大學惠蓀講座｜諾貝爾獎得主 John Clarke 專題演講暨科普展覽｜115年11月12日">
+<meta property="og:title" content="敬邀｜諾貝爾獎得主專題演講暨科普展覽">
+<meta property="og:description" content="115年11月12日（四）13:30｜國立中興大學圖書館7樓國際演講廳｜主講人 Prof. John Clarke">
+<meta property="og:image" content="poster-lecture.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#081129; --navy2:#0f1d45; --gold:#e3bf6b; --gold2:#b98a35; --cream:#f6efe0; --ink:#1a1a1a;
+  --pw:min(92vw, calc((100svh - 120px) * 0.706), 560px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at top,#1a2a5c 0%,#050a1a 70%) fixed;color:var(--cream);
+  font-family:"Noto Sans TC",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100svh;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.book{position:relative;width:var(--pw);aspect-ratio:1720/2436;perspective:2200px;margin-top:8px}
+.page{position:absolute;inset:0;border-radius:6px;overflow:hidden;transform-origin:left center;
+  transition:transform .8s cubic-bezier(.3,.1,.2,1),box-shadow .8s;backface-visibility:hidden;
+  box-shadow:0 18px 50px rgba(0,0,0,.55);background:var(--navy)}
+.page.turned{transform:rotateY(-178deg);box-shadow:none;pointer-events:none}
+.page.gone{visibility:hidden}
+.page img.poster{width:100%;height:100%;object-fit:cover;display:block}
+.page::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.18),transparent 6%)}
+
+/* 封面 */
+.cover{background:
+  radial-gradient(circle at 80% 18%,rgba(120,150,255,.25),transparent 40%),
+  radial-gradient(circle at 15% 85%,rgba(227,191,107,.18),transparent 45%),
+  linear-gradient(160deg,#0f1d45,#060c22 70%);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:8% 8% 8.5%;font-size:calc(var(--pw) / 27)}
+.cover .frame{position:absolute;inset:3.2%;border:1px solid rgba(227,191,107,.55);border-radius:3px;pointer-events:none}
+.cover .frame::before{content:"";position:absolute;inset:1.2%;border:1px solid rgba(227,191,107,.25)}
+.orbit{position:absolute;border:1px solid rgba(227,191,107,.22);border-radius:50%;pointer-events:none}
+.o1{width:120%;height:46%;left:-10%;top:30%;transform:rotate(-14deg)}
+.o2{width:100%;height:30%;left:0;top:38%;transform:rotate(22deg);border-color:rgba(140,170,255,.2)}
+.dot{position:absolute;width:1.6%;aspect-ratio:1;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold)}
+.cover>*:not(.frame):not(.orbit):not(.dot){position:relative}
+.org{letter-spacing:.35em;font-size:.82em;color:#d9cfb8}
+.invite{font-family:"Noto Serif TC",serif;font-weight:900;font-size:3.4em;letter-spacing:.3em;margin:.35em 0 0 .3em;line-height:1.2;
+  background:linear-gradient(180deg,#fff3cf,var(--gold) 50%,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rule{width:40%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:.6em auto}
+.title{font-family:"Noto Serif TC",serif;font-weight:700;font-size:1.75em;line-height:1.35;color:var(--gold)}
+.title small{display:block;font-size:.62em;color:var(--cream);letter-spacing:.12em;margin-top:.25em}
+.theme{margin-top:.9em;font-size:.95em;letter-spacing:.2em;color:#cfd8ff}
+.theme i{display:block;font-style:normal;letter-spacing:.06em;font-size:.82em;opacity:.8;margin-top:.15em}
+.speaker{margin-top:auto;padding-top:.8em;font-size:.9em;line-height:1.6}
+.speaker b{display:block;font-family:"Noto Serif TC",serif;font-size:1.65em;color:#fff;letter-spacing:.04em}
+.when{margin-top:.7em;padding:.6em 1em;border-top:1px solid rgba(227,191,107,.4);border-bottom:1px solid rgba(227,191,107,.4);
+  font-size:.92em;line-height:1.7;width:100%}
+.when strong{color:var(--gold);font-weight:700}
+.host{margin-top:.8em;font-size:.68em;color:#a9a39a;letter-spacing:.08em}
+
+/* 回函 */
+.rsvp{background:linear-gradient(170deg,#fbf6ea,#f1e6cc);color:var(--ink);padding:8% 8% 6%;
+  display:flex;flex-direction:column;font-size:calc(var(--pw) / 26);overflow-y:auto}
+.rsvp h2{font-family:"Noto Serif TC",serif;font-size:2em;text-align:center;letter-spacing:.4em;color:#122152;margin-left:.4em}
+.rsvp .sub{text-align:center;font-size:.85em;color:#6b5a35;margin:.3em 0 1em}
+.rsvp label.f{display:block;font-weight:700;margin:.9em 0 .4em;color:#122152}
+.rsvp input[type=text]{width:100%;font-size:16px;padding:.7em .8em;border:1px solid #c8b585;border-radius:8px;background:#fffdf7;font-family:inherit}
+.rsvp input[type=text]:focus{outline:2px solid var(--gold2);border-color:transparent}
+.q{background:#fffdf7;border:1px solid #e0d2ae;border-radius:10px;padding:.7em .8em;margin-top:.8em}
+.q .qt{font-weight:700;color:#122152}
+.q .qd{font-size:.8em;color:#7a6a45;margin:.15em 0 .55em}
+.opts{display:flex;gap:.5em}
+.opts label{flex:1;position:relative}
+.opts input{position:absolute;opacity:0}
+.opts span{display:block;text-align:center;padding:.55em 0;border:1px solid #c8b585;border-radius:999px;font-size:.95em;cursor:pointer;transition:.2s}
+.opts input:checked+span{background:#122152;color:#fff;border-color:#122152}
+.opts input:focus-visible+span{outline:2px solid var(--gold2)}
+button.send{margin-top:1.2em;width:100%;padding:.85em;border:0;border-radius:999px;font-size:1.05em;font-weight:700;font-family:inherit;letter-spacing:.3em;
+  background:linear-gradient(180deg,#f0d38a,var(--gold2));color:#1b1405;cursor:pointer;box-shadow:0 4px 14px rgba(185,138,53,.35)}
+button.send:disabled{opacity:.6}
+.msg{margin-top:.8em;text-align:center;font-size:.9em;min-height:1.4em}
+.msg.err{color:#a3261a}
+.done{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.6em}
+.done .big{font-family:"Noto Serif TC",serif;font-size:2em;color:#122152}
+.done p{color:#5a4b2a;line-height:1.7}
+.done button{margin-top:.6em;background:none;border:1px solid #b9a26b;border-radius:999px;padding:.5em 1.2em;font-family:inherit;color:#6b5a35;cursor:pointer}
+
+/* 控制列 */
+.nav{display:flex;align-items:center;gap:14px;margin:14px 0 calc(10px + env(safe-area-inset-bottom))}
+.nav button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(227,191,107,.5);background:rgba(8,17,41,.6);color:var(--gold);font-size:18px;cursor:pointer}
+.nav button:disabled{opacity:.25}
+.dots{display:flex;gap:8px}
+.dots i{width:8px;height:8px;border-radius:50%;background:rgba(227,191,107,.3);transition:.3s;cursor:pointer}
+.dots i.on{background:var(--gold);width:22px;border-radius:4px}
+.hint{position:fixed;top:calc(10px + env(safe-area-inset-top));font-size:12px;color:rgba(246,239,224,.55);letter-spacing:.15em}
+</style>
+</head>
+<body>
+<div class="hint">左右滑動或點按鈕翻頁</div>
+
+<div class="book" id="book">
+  <!-- 第 1 頁 封面 -->
+  <section class="page cover" aria-label="封面">
+    <div class="orbit o1"></div><div class="orbit o2"></div>
+    <div class="dot" style="left:84%;top:40%"></div><div class="dot" style="left:12%;top:60%;width:1.1%"></div>
+    <div class="frame"></div>
+    <div class="org">國立中興大學惠蓀講座</div>
+    <div class="invite">敬邀</div>
+    <div class="rule"></div>
+    <div class="title">諾貝爾獎得主<br>專題演講暨科普展覽<small>Nobel Laureates Series</small></div>
+    <div class="theme">量子之間・興見未來<i>From Quantum to Infinity</i></div>
+    <div class="speaker">主講人<b>Prof. John Clarke</b>2025 諾貝爾物理學獎得主<br>University of California, Berkeley</div>
+    <div class="when">
+      <strong>中華民國 115 年 11 月 12 日（星期四）</strong><br>
+      下午 1:30 – 4:00<br>
+      國立中興大學 圖書館 7 樓國際演講廳
+    </div>
+    <div class="host">主辦單位｜國立中興大學前瞻理工中心</div>
+  </section>
+
+  <!-- 第 2 頁 講座海報 -->
+  <section class="page" aria-label="諾貝爾講座海報">
+    <img class="poster" src="poster-lecture.jpg" alt="諾貝爾獎得主專題演講暨科普展覽海報，115年11月12日 13:30–16:00，圖書館7樓國際演講廳，主講人 Prof. John Clarke">
+  </section>
+
+  <!-- 第 3 頁 量子展 -->
+  <section class="page" aria-label="量子展海報">
+    <img class="poster" src="poster-quantum.jpg" alt="量子之間・興見未來 From Quantum to Infinity 科普展海報">
+  </section>
+
+  <!-- 第 4 頁 回函 -->
+  <section class="page rsvp" aria-label="回函">
+    <form id="form" novalidate>
+      <h2>回函</h2>
+      <div class="sub">敬請撥冗回覆，以利安排座位與餐敘</div>
+
+      <label class="f" for="name">姓名</label>
+      <input type="text" id="name" name="name" autocomplete="name" placeholder="請輸入姓名" required>
+
+      <div class="q">
+        <div class="qt">1. 參加講座</div>
+        <div class="qd">11/12（四）13:30–16:00｜圖書館 7 樓國際演講廳</div>
+        <div class="opts">
+          <label><input type="radio" name="lecture" value="參加"><span>參加</span></label>
+          <label><input type="radio" name="lecture" value="不克參加"><span>不克參加</span></label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="qt">2. 參加晚宴</div>
+        <div class="qd">11/12（四）18:00｜台中艾美酒店</div>
+        <div class="opts">
+          <label><input type="radio" name="dinner" value="參加"><span>參加</span></label>
+          <label><input type="radio" name="dinner" value="不克參加"><span>不克參加</span></label>
+        </div>
+      </div>
+
+      <button class="send" type="submit" id="send">送出回函</button>
+      <div class="msg" id="msg" role="status"></div>
+    </form>
+    <div class="done" id="done">
+      <div class="big">感謝回覆</div>
+      <p id="doneText"></p>
+      <button type="button" id="again">修改回覆</button>
+    </div>
+  </section>
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="上一頁">‹</button>
+  <div class="dots" id="dots"></div>
+  <button id="next" aria-label="下一頁">›</button>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+  var pages=[].slice.call(document.querySelectorAll('.page'));
+  var cur=0, dots=document.getElementById('dots');
+  pages.forEach(function(p,i){
+    p.style.zIndex=pages.length-i;
+    var d=document.createElement('i'); d.onclick=function(){go(i)}; dots.appendChild(d);
+  });
+  function render(){
+    pages.forEach(function(p,i){
+      if(i<cur){p.classList.add('turned');setTimeout(function(){if(i<cur)p.classList.add('gone')},800);}
+      else{p.classList.remove('gone');p.classList.remove('turned');}
+    });
+    [].forEach.call(dots.children,function(d,i){d.classList.toggle('on',i===cur)});
+    document.getElementById('prev').disabled=cur===0;
+    document.getElementById('next').disabled=cur===pages.length-1;
+  }
+  function go(n){n=Math.max(0,Math.min(pages.length-1,n));if(n===cur)return;
+    if(n<cur){for(var i=n;i<cur;i++)pages[i].classList.remove('gone');}
+    requestAnimationFrame(function(){cur=n;render();});
+  }
+  document.getElementById('prev').onclick=function(){go(cur-1)};
+  document.getElementById('next').onclick=function(){go(cur+1)};
+  document.addEventListener('keydown',function(e){if(e.target.tagName==='INPUT')return;
+    if(e.key==='ArrowRight')go(cur+1); if(e.key==='ArrowLeft')go(cur-1);});
+  var sx=null,sy=0;
+  document.getElementById('book').addEventListener('touchstart',function(e){
+    if(/INPUT|BUTTON|LABEL|SPAN/.test(e.target.tagName)){sx=null;return}
+    sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  document.getElementById('book').addEventListener('touchend',function(e){
+    if(sx===null)return; var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.3) go(cur+(dx<0?1:-1)); sx=null;},{passive:true});
+  if(location.hash==='#rsvp') cur=pages.length-1;
+  render();
+
+  // 回函
+  var form=document.getElementById('form'), msg=document.getElementById('msg'), btn=document.getElementById('send');
+  form.addEventListener('submit',function(e){
+    e.preventDefault(); msg.className='msg';
+    var nameEl=document.getElementById('name'), name=nameEl.value.trim(), lec=(form.querySelector('[name=lecture]:checked')||{}).value, din=(form.querySelector('[name=dinner]:checked')||{}).value;
+    if(!name){msg.textContent='請填寫姓名';msg.className='msg err';nameEl.focus();return}
+    if(!lec||!din){msg.textContent='請選擇是否參加講座與晚宴';msg.className='msg err';return}
+    if(!window.RSVP_URL){msg.textContent='回函系統尚未開放，請稍後再試';msg.className='msg err';return}
+    btn.disabled=true; msg.textContent='送出中…';
+    fetch(window.RSVP_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams({name:name,lecture:lec,dinner:din})})
+      .then(function(){
+        document.getElementById('doneText').innerHTML='';
+        var t=document.getElementById('doneText');
+        t.append(name+'，您的回覆已收到');t.appendChild(document.createElement('br'));
+        t.append('講座：'+lec+'　晚宴：'+din);
+        form.style.display='none'; document.getElementById('done').style.display='flex';
+      })
+      .catch(function(){msg.textContent='送出失敗，請檢查網路後再試一次';msg.className='msg err'})
+      .then(function(){btn.disabled=false});
+  });
+  document.getElementById('again').onclick=function(){
+    document.getElementById('done').style.display='none'; form.style.display='block'; msg.textContent='';
+  };
+})();
+</script>
+</body>
+</html>
