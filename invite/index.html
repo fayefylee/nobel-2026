@@ -48,15 +48,20 @@ body{background:radial-gradient(ellipse at top,#1a2a5c 0%,#050a1a 70%) fixed;col
 .invite{font-family:"Noto Serif TC",serif;font-weight:900;font-size:3.4em;letter-spacing:.3em;margin:.35em 0 0 .3em;line-height:1.2;
   background:linear-gradient(180deg,#fff3cf,var(--gold) 50%,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .rule{width:40%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:.6em auto}
-.title{font-family:"Noto Serif TC",serif;font-weight:700;font-size:1.75em;line-height:1.35;color:var(--gold)}
+.title{font-family:"Noto Serif TC",serif;font-weight:700;font-size:1.65em;line-height:1.35;color:var(--gold)}
 .title small{display:block;font-size:.62em;color:var(--cream);letter-spacing:.12em;margin-top:.25em}
 .theme{margin-top:.9em;font-size:.95em;letter-spacing:.2em;color:#cfd8ff}
 .theme i{display:block;font-style:normal;letter-spacing:.06em;font-size:.82em;opacity:.8;margin-top:.15em}
 .speaker{margin-top:auto;padding-top:.8em;font-size:.9em;line-height:1.6}
 .speaker b{display:block;font-family:"Noto Serif TC",serif;font-size:1.65em;color:#fff;letter-spacing:.04em}
-.when{margin-top:.7em;padding:.6em 1em;border-top:1px solid rgba(227,191,107,.4);border-bottom:1px solid rgba(227,191,107,.4);
-  font-size:.92em;line-height:1.7;width:100%}
-.when strong{color:var(--gold);font-weight:700}
+.when{margin-top:.8em;padding:.55em .2em .35em;border-top:1px solid rgba(227,191,107,.4);border-bottom:1px solid rgba(227,191,107,.4);
+  font-size:.88em;line-height:1.5;width:100%;text-align:left}
+.when .date{color:var(--gold);font-weight:700;text-align:center;margin-bottom:.4em;letter-spacing:.04em}
+.when .row{display:flex;gap:.8em;align-items:flex-start;padding:.35em 0;border-top:1px dashed rgba(227,191,107,.25)}
+.when .t{flex:0 0 3.4em;text-align:center;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;line-height:1.35}
+.when .e b{display:block;color:#fff;font-weight:700}
+.when .e em{display:block;font-style:normal;font-size:.88em;color:#cfd8ff;margin-top:.1em}
+.when .e em::before{content:"📍";margin-right:.25em;font-size:.9em}
 .host{margin-top:.8em;font-size:.68em;color:#a9a39a;letter-spacing:.08em}
 
 /* 回函 */
@@ -109,12 +114,11 @@ button.send:disabled{opacity:.6}
     <div class="invite">敬邀</div>
     <div class="rule"></div>
     <div class="title">諾貝爾獎得主<br>專題演講暨科普展覽<small>Nobel Laureates Series</small></div>
-    <div class="theme">量子之間・興見未來<i>From Quantum to Infinity</i></div>
     <div class="speaker">主講人<b>Prof. John Clarke</b>2025 諾貝爾物理學獎得主<br>University of California, Berkeley</div>
     <div class="when">
-      <strong>中華民國 115 年 11 月 12 日（星期四）</strong><br>
-      下午 1:30 – 4:00<br>
-      國立中興大學 圖書館 7 樓國際演講廳
+      <div class="date">中華民國 115 年 11 月 12 日（星期四）</div>
+      <div class="row"><span class="t">14:00<br>16:00</span><span class="e"><b>惠蓀講座・諾貝爾系列專題演講</b>暨「量子之間・興見未來」科普展<em>國立中興大學 圖書館 7 樓國際演講廳</em></span></div>
+      <div class="row"><span class="t">18:00</span><span class="e"><b>歡迎晚宴</b><em>台中艾美酒店</em></span></div>
     </div>
     <div class="host">主辦單位｜國立中興大學前瞻理工中心</div>
   </section>
@@ -140,7 +144,7 @@ button.send:disabled{opacity:.6}
 
       <div class="q">
         <div class="qt">1. 參加講座</div>
-        <div class="qd">11/12（四）13:30–16:00｜圖書館 7 樓國際演講廳</div>
+        <div class="qd">11/12（四）14:00–16:00｜圖書館 7 樓國際演講廳</div>
         <div class="opts">
           <label><input type="radio" name="lecture" value="參加"><span>參加</span></label>
           <label><input type="radio" name="lecture" value="不克參加"><span>不克參加</span></label>
