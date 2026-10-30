@@ -73,11 +73,11 @@ body{background:radial-gradient(ellipse at top,#1a2a5c 0%,#050a1a 70%) fixed;col
 .rsvp{background:linear-gradient(170deg,#fbf6ea,#f1e6cc);color:var(--ink);padding:8% 8% 6%;
   display:flex;flex-direction:column;font-size:calc(var(--pw) / 26);overflow-y:auto}
 .rsvp h2{font-family:"Noto Serif TC",serif;font-size:2em;text-align:center;letter-spacing:.4em;color:#122152;margin-left:.4em}
-.rsvp .sub{text-align:center;font-size:.85em;color:#6b5a35;margin:.3em 0 1em}
-.rsvp label.f{display:block;font-weight:700;margin:.9em 0 .4em;color:#122152}
-.rsvp input[type=text]{width:100%;font-size:16px;padding:.7em .8em;border:1px solid #c8b585;border-radius:8px;background:#fffdf7;font-family:inherit}
+.rsvp .sub{text-align:center;font-size:.85em;color:#6b5a35;margin:.3em 0 .6em}
+.rsvp label.f{display:block;font-weight:700;margin:.7em 0 .35em;color:#122152}
+.rsvp input[type=text]{width:100%;font-size:16px;padding:.55em .8em;border:1px solid #c8b585;border-radius:8px;background:#fffdf7;font-family:inherit}
 .rsvp input[type=text]:focus{outline:2px solid var(--gold2);border-color:transparent}
-.q{background:#fffdf7;border:1px solid #e0d2ae;border-radius:10px;padding:.7em .8em;margin-top:.8em}
+.q{background:#fffdf7;border:1px solid #e0d2ae;border-radius:10px;padding:.6em .8em;margin-top:.7em}
 .q .qt{font-weight:700;color:#122152}
 .q .qd{font-size:.8em;color:#7a6a45;margin:.15em 0 .55em}
 .opts{display:flex;gap:.5em}
@@ -147,8 +147,11 @@ button.send:disabled{opacity:.6}
       <label class="f" for="name">姓名</label>
       <input type="text" id="name" name="name" autocomplete="name" placeholder="請輸入姓名" required>
 
+      <label class="f" for="unit">單位</label>
+      <input type="text" id="unit" name="unit" autocomplete="organization" placeholder="服務單位／職稱">
+
       <div class="q">
-        <div class="qt">1. 參加講座</div>
+        <div class="qt">1. 參加諾貝爾得主講座</div>
         <div class="qd">11/12（四）13:30–16:00｜圖書館 7 樓國際演講廳</div>
         <div class="opts">
           <label><input type="radio" name="lecture" value="參加"><span>參加</span></label>
@@ -157,7 +160,7 @@ button.send:disabled{opacity:.6}
       </div>
 
       <div class="q">
-        <div class="qt">2. 參加晚宴</div>
+        <div class="qt">2. 參加諾貝爾得主歡迎晚宴</div>
         <div class="qd">11/12（四）18:00｜台中艾美酒店 21 樓星空廳</div>
         <div class="opts">
           <label><input type="radio" name="dinner" value="參加"><span>參加</span></label>
@@ -227,12 +230,12 @@ button.send:disabled{opacity:.6}
     if(!lec||!din){msg.textContent='請選擇是否參加講座與晚宴';msg.className='msg err';return}
     if(!window.RSVP_URL){msg.textContent='回函系統尚未開放，請稍後再試';msg.className='msg err';return}
     btn.disabled=true; msg.textContent='送出中…';
-    fetch(window.RSVP_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams({name:name,lecture:lec,dinner:din})})
+    fetch(window.RSVP_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams({name:name,unit:document.getElementById('unit').value.trim(),lecture:lec,dinner:din})})
       .then(function(){
         document.getElementById('doneText').innerHTML='';
         var t=document.getElementById('doneText');
         t.append(name+'，您的回覆已收到');t.appendChild(document.createElement('br'));
-        t.append('講座：'+lec+'　晚宴：'+din);
+        t.append('講座：'+lec+'　歡迎晚宴：'+din);
         form.style.display='none'; document.getElementById('done').style.display='flex';
       })
       .catch(function(){msg.textContent='送出失敗，請檢查網路後再試一次';msg.className='msg err'})
