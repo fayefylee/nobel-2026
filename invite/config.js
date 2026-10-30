@@ -1,2 +1,2 @@
-// 部署好 Google Apps Script 後，把「網頁應用程式網址」貼在下面引號裡（以 https://script.google.com/macros/s/ 開頭、/exec 結尾）
-window.RSVP_URL = "";
+// Google Apps Script 網頁應用程式網址（回函收件）
+window.RSVP_URL = "https://script.google.com/macros/s/AKfycbwvce-4i4l-0veksnsEshK2NdckWa68i_73UZIW5WbNKXnPfhOT-gsfDsstt4PC_jPYMA/exec";
