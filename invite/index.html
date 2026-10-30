@@ -70,10 +70,12 @@ body{background:radial-gradient(ellipse at top,#1a2a5c 0%,#050a1a 70%) fixed;col
 .host span{color:var(--gold);margin-right:.5em;font-weight:700}
 
 /* 量子展資訊 */
-.qinfo{position:absolute;left:28%;top:3.2%;width:44%;text-align:left;color:#fff;font-size:calc(var(--pw) / 28);line-height:1.25;
-  font-family:"Noto Sans TC",sans-serif}
-.qinfo b{display:block;font-size:1.75em;letter-spacing:.03em;color:#5bbf46;font-weight:700}
-.qinfo span{display:block;font-size:.9em;letter-spacing:.08em;margin-top:.25em;padding-top:.3em;border-top:1px solid rgba(91,191,70,.7);white-space:nowrap}
+.qinfo{position:absolute;left:29.3%;top:19%;writing-mode:vertical-rl;text-orientation:mixed;color:#fff;
+  font-size:calc(var(--pw) / 34);line-height:1.2;font-family:"Noto Sans TC",sans-serif;white-space:nowrap;
+  display:flex;flex-direction:row;align-items:center}
+.qinfo b{display:block;color:#5bbf46;font-weight:700;letter-spacing:.06em;font-size:1.15em}
+.qinfo i{display:block;width:1px;height:1.6em;margin:.7em 0;background:rgba(91,191,70,.85);writing-mode:horizontal-tb}
+.qinfo span{display:block;letter-spacing:.18em;font-family:"PingFang TC","Microsoft JhengHei","Noto Sans CJK TC",sans-serif}
 
 /* 回函 */
 .rsvp{background:linear-gradient(170deg,#fbf6ea,#f1e6cc);color:var(--ink);padding:8% 8% 6%;
@@ -142,7 +144,7 @@ button.send:disabled{opacity:.6}
   <!-- 第 3 頁 量子展 -->
   <section class="page" aria-label="量子展海報">
     <img class="poster" src="poster-quantum.jpg" alt="量子之間・興見未來 From Quantum to Infinity 科普展海報">
-    <div class="qinfo"><b>2026.11.12</b><span>國立中興大學 圖書館七樓</span></div>
+    <div class="qinfo"><b>2026.11.12</b><i></i><span>國立中興大學 圖書館七樓</span></div>
   </section>
 
   <!-- 第 4 頁 回函 -->
