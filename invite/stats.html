@@ -23,6 +23,12 @@ h1{font-family:"Noto Serif TC",serif;color:var(--gold);font-size:24px;letter-spa
 .bar i{display:block;height:100%;background:var(--gold);border-radius:4px;transition:width .6s}
 .foot{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
 button{background:none;border:1px solid rgba(227,191,107,.5);color:var(--gold);border-radius:999px;padding:7px 14px;font-family:inherit;cursor:pointer}
+.list{margin-top:14px}
+.list h2{font-size:15px;color:var(--gold);margin:18px 0 8px;font-weight:700}
+.list h2 span{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
+.names{display:flex;flex-wrap:wrap;gap:6px}
+.names span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:4px 11px;font-size:14px}
+.names .none{background:none;border:0;color:var(--muted);padding:0}
 .err{color:#ff9d8f;margin-top:16px;font-size:14px}
 </style>
 </head>
@@ -37,6 +43,7 @@ button{background:none;border:1px solid rgba(227,191,107,.5);color:var(--gold);b
     <div class="card"><div class="k">兩者都參加</div><div class="v" id="both">–<small>人</small></div></div>
     <div class="card"><div class="k">皆不克參加</div><div class="v" id="neither">–<small>人</small></div></div>
   </div>
+  <div class="list" id="list"></div>
   <div class="err" id="err"></div>
   <div class="foot"><span id="time"></span><button id="reload">重新整理</button></div>
 </div>
@@ -52,6 +59,16 @@ function load(){
     var t=s.total||1;
     document.getElementById('bl').style.width=(s.lecture/t*100)+'%';
     document.getElementById('bd').style.width=(s.dinner/t*100)+'%';
+    var L=document.getElementById('list'); L.textContent='';
+    [['參加講座',s.lectureNames],['參加晚宴',s.dinnerNames],['皆不克參加',s.declinedNames]].forEach(function(g){
+      if(!g[1])return;
+      var h=document.createElement('h2'); h.textContent=g[0];
+      var c=document.createElement('span'); c.textContent=g[1].length+' 人'; h.appendChild(c);
+      var box=document.createElement('div'); box.className='names';
+      if(!g[1].length){var n=document.createElement('span');n.className='none';n.textContent='（尚無）';box.appendChild(n);}
+      g[1].forEach(function(nm){var n=document.createElement('span');n.textContent=nm;box.appendChild(n);});
+      L.appendChild(h);L.appendChild(box);
+    });
     document.getElementById('time').textContent='更新於 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
   }).catch(function(){err.textContent='讀取失敗，請稍後再試'});
 }
