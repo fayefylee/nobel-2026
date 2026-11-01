@@ -175,7 +175,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .st-name{font-weight:700;color:var(--lvc)}
 .st-rows{list-style:none;margin:6px 0 0;padding:0}
 .st-pt{margin-top:6px}
-.st-tel{color:var(--accent);text-decoration:none;font-weight:600}
+.st-tel{color:var(--accent);text-decoration:none;font-weight:600;font-size:.85rem;white-space:nowrap}
+.st-ti{font-size:.65em}
 .st-rows li{padding:6px 0;border-top:1px solid var(--line)}
 .st-rows li:first-child{border-top:0}
 .uc0{--uc:#c28a00}.uc1{--uc:#c2457a}.uc2{--uc:#0f8b8d}.uc3{--uc:#5046b8}.uc4{--uc:#d2691e}.uc5{--uc:#2e8b57}.uc6{--uc:#8a5a2b}.uc7{--uc:#6b7280}
@@ -614,9 +615,9 @@ if(!items.length&&!people.length){L.append(el("div","empty",canW?"還沒有人�
 if(view==="time")return renderTime(L);
 var asg={};items.forEach(function(it){names(it.name).forEach(function(n){(asg[n]=asg[n]||[]).push(it)})});
 var seen={};
-function card(n,sub){seen[n]=1;var p=pmap[n],c=el("div","st-pc "+lvc(n)+(sub?" sub":"")),h=el("div","st-hd"+(canW?" edit":"")),nm=el("span","st-name",n);h.append(nm);
+function card(n,sub){seen[n]=1;var p=pmap[n],c=el("div","st-pc "+lvc(n)+(sub?" sub":"")),h=el("div","st-hd"+(canW?" edit":"")),nm=el("span","st-name",n);h.append(nm);if(p&&p.phone){var pha=el("a","st-tel"),pic=el("span","st-ti","☎");pha.append(pic," "+fmtPh(p.phone));pha.href="tel:"+p.phone.replace(/[^\d+#*]/g,"");pha.addEventListener("click",function(e){e.stopPropagation()});h.append(pha)}
 if(p)h.append(el("span","st-badge "+lvc(n),p.level));else h.append(el("span","st-badge lvn","未分級"));
-if(canW)h.addEventListener("click",function(){openP(p||null,n)});c.append(h);if(p&&p.phone){var phd=el("div","ck-sub"),pha=el("a","st-tel","☎ "+fmtPh(p.phone));pha.href="tel:"+p.phone.replace(/[^\d+#*]/g,"");pha.addEventListener("click",function(e){e.stopPropagation()});phd.append(pha);c.append(phd)}var pt=p&&(p.task||p.note);if(pt){var tb=el("div","st-pt");if(p.task)tb.append(el("div","ck-t",p.task));if(p.note)tb.append(el("div","ck-note",p.note));c.append(tb)}
+if(canW)h.addEventListener("click",function(){openP(p||null,n)});c.append(h);var pt=p&&(p.task||p.note);if(pt){var tb=el("div","st-pt");if(p.task)tb.append(el("div","ck-t",p.task));if(p.note)tb.append(el("div","ck-note",p.note));c.append(tb)}
 var a=(asg[n]||[]).slice().sort(cmp);
 if(a.length){var ul=el("ul","st-rows");a.forEach(function(it){ul.append(row(it,false))});c.append(ul)}else if(!pt)c.append(el("div","ck-note","尚無分配的工作項目"));
 return c}
