@@ -164,6 +164,20 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .web{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;margin:-6px 0 12px;font-size:.85rem;color:var(--mute)}
 .web button{padding:4px 12px;font-size:.85rem}
 .row2 .f input{min-width:0}
+.lv0{--lvc:var(--sp)}.lv1{--lvc:var(--accent)}.lv2{--lvc:var(--spk)}.lv3{--lvc:var(--pa)}.lvn{--lvc:var(--mute)}
+.st-leg{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.st-badge{font-size:.72rem;border:1px solid var(--lvc);color:var(--lvc);border-radius:10px;padding:0 8px;line-height:1.6;white-space:nowrap}
+.st-nm{color:var(--lvc);font-weight:600}
+.st-pc{border:1px solid var(--line);border-left:5px solid var(--lvc);border-radius:10px;background:var(--tab);padding:8px 12px;margin-bottom:8px}
+.st-pc.sub{margin-left:18px}
+.st-hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.st-hd.edit,.st-row.edit{cursor:pointer}
+.st-name{font-weight:700;color:var(--lvc)}
+.st-rows{list-style:none;margin:6px 0 0;padding:0}
+.st-rows li{padding:6px 0;border-top:1px solid var(--line)}
+.st-rows li:first-child{border-top:0}
+.st-unit{border:1px solid var(--line);border-radius:12px;padding:6px 10px 2px;margin-top:14px;background:var(--hl)}
+.st-unit>h3{margin-top:6px}
 </style>
 <div class="wrap" id="app">
 <div class="vsw" role="tablist" aria-label="切換檢視">
@@ -219,12 +233,26 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <button id="stv-person" data-stv="person" aria-pressed="true">依人員</button>
 <button id="stv-time" data-stv="time" aria-pressed="false">依時間</button>
 </div>
-<button class="pri" id="stAdd" hidden>＋ 新增分配</button>
+<button class="pri" id="stAddP" hidden>＋ 新增人員</button><button class="pri" id="stAdd" hidden>＋ 新增分配</button>
 <span class="ck-ro" id="stRo" hidden>僅供查閱</span>
 </div>
+<div class="st-leg" id="stLeg"></div>
 <div id="stList"><div class="empty">正在載入…</div></div>
 <div class="ck-status" id="stStatus"></div>
 </div>
+<dialog class="ck-dlg" id="pgDlg">
+<form id="pgForm">
+<h3 id="pgDlgT">新增人員</h3>
+<label class="f"><span>姓名</span><input type="text" id="pg-name" required maxlength="40"></label>
+<label class="f"><span>級別</span><select id="pg-level"><option>總指揮</option><option>分項指揮</option><option>分項小組長</option><option>隊員</option></select></label>
+<label class="f" id="pg-parent-wrap"><span>所屬分項指揮（小組長、隊員歸在該分項指揮下）</span><select id="pg-parent"></select></label>
+<div class="ck-acts">
+<button type="button" class="danger l" id="pg-del" hidden>刪除人員</button>
+<button type="button" id="pg-cancel">取消</button>
+<button type="submit" class="pri" id="pg-save">儲存</button>
+</div>
+</form>
+</dialog>
 <dialog class="ck-dlg" id="stDlg">
 <form id="stForm">
 <h3 id="stDlgT">新增分配</h3>
@@ -278,7 +306,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div id="toast" class="toast" hidden></div>
 <div id="modal" class="modal" hidden><div><p style="margin:0 0 8px">已自動複製失敗，請長按全選後手動複製：</p><textarea id="mtext" readonly></textarea><p style="margin:8px 0 0;text-align:right"><button data-a="closemodal">關閉</button></p></div></div>
 <script>
-/*SNAP*/var SNAP={"schedule":{"days":[{"date":"2026-11-10","info":"","items":[{"desc":"廠商進場 一樓電梯廊間/會場/演講廳場內/七樓展區","ico":"🏗️","time":"10:00-17:00","title":"場佈 - 廠商進駐布置(金旺)"},{"desc":"1. 主測翻譯軟體 - 主螢幕為演講者投影 兩側副螢幕為翻譯投影\n2. 若需另借軟硬體請立即提出說明","ico":"🖥️","time":"14:00-15:00","title":"電腦軟硬體第一次測試(彥君)"}]},{"date":"2026-11-11","info":"","items":[{"desc":"地點：前瞻理工中心\n說明活動流程與各組工作分配","ico":"📋","time":"13:00-13:40","title":"工作人員會前說明會"},{"desc":"準備協助搬運折疊椅至圖書館七樓","ico":"📍","time":"13:50-14:00","title":"工作人員惠蓀堂集合"},{"desc":"地點：圖書館七樓國際演講廳\n投影螢幕/講者螢幕/中英文翻譯","ico":"💻","time":"14:00-16:00","title":"電腦測試"},{"desc":"地點：圖書館七樓國際演講廳","ico":"🎥","time":"14:00","title":"攝影組測試"},{"desc":"地點：圖書館七樓國際演講廳","ico":"🗺️","time":"14:00-15:00","title":"標示高中生座位分區"},{"desc":"地點：惠蓀堂至圖書館七樓國際演講廳","ico":"🚚","time":"14:00-14:30","title":"協助搬運摺疊椅上車並至送至圖書館七樓"},{"desc":"地點：圖書館七樓國際演講廳\n全程彩排","ico":"🎭","time":"14:20-16:00","title":"儀禮大使彩排 / 司儀彩排 / (孟昌老師 / 凡瑋老師)"},{"cls":"hl","desc":"地點：圖書館七樓國際演講廳\n撤換椅子/ 折疊椅共計250張","ico":"🪑","time":"14:30-16:00","title":"椅子佈置"}]},{"date":"2026-11-12","info":"13:30–16:00｜國立中興大學圖書館 7 樓","items":[{"desc":"10:00 集合及活動流程演練\n10:30 攝影組/電腦組(含燈光)測試/各組準備\n11:30 工作人員用餐","ico":"📍","time":"10:00-12:30","title":"工作人員集合"},{"desc":"抵達後進行簡報設備準備（彥君/士維）","ico":"🚌","time":"12:30-13:00","title":"至台中艾美酒店迎接貴賓前往中興大學(吳秋賢教授/何孟書主任)"},{"cls":"hl","desc":"引導學生上7樓 並在規劃區域內入座","ico":"🎒","time":"12:30-13:00","title":"高中生抵達會場"},{"ico":"🚘","time":"13:00","title":"Dr. John Clarke 及貴賓抵達中興大學"},{"pre":"貴賓室休息","time":"13:00-13:30"},{"cls":"main","desc":"致歡迎詞：詹富智校長","ico":"🎤","tag":"主要活動","time":"13:30-13:40","title":"貴賓介紹/致贈惠蓀獎座"},{"cls":"main","desc":"講者：Dr. John Clarke （2025年諾貝爾物理學獎得主）\n主持人：Dr. Hsiao-Mei (Sherry) Cho\n講題：From SLUGs to Macroscopic Quantum Phenomena","ico":"🏆","sub":"(含問答)","tag":"主要活動","time":"13:40-14:30","title":"諾貝爾獎得主演講"},{"ico":"☕","time":"14:30-14:40","title":"中場休息"},{"cls":"main","desc":"講者：DR. Sam Benz\n主持人：Dr. Hsiao-Mei (Sherry) Cho\n講題：Superconducting Devices: Principles and Real-World Applications","ico":"🔬","sub":"(含問答)","tag":"主要活動","time":"14:40-15:20","title":"特邀演講"},{"desc":"閉幕及嘉賓離席/欲合照的請留下並配合人員安排/不接受單獨合照","ico":"📷","time":"15:20-15:30","title":"閉幕"},{"desc":"動線：由孟昌老師/凡瑋老師/文君協助安排聽講團體，一組一組上台與講者合照後，離開會場至一樓搭車","ico":"📸","time":"15:30-16:00","title":"合照（於演講廳內）"},{"ico":"📹","time":"16:00-16:30","title":"採訪"},{"desc":"地點：台中艾美酒店21樓星空廳","ico":"🍽️","sub":"(台中艾美酒店)","time":"18:00","title":"歡迎晚宴"}],"special":true,"title":"NCHU Nobel Laureate Lecture 2026"},{"date":"2026-11-13","info":"","items":[{"ico":"🚚","time":"09:30-10:30","title":"協助將椅子搬回惠蓀堂"},{"desc":"七樓展區及一樓電梯廊間","ico":"🧰","time":"10:00","title":"撤展"},{"desc":"愛你鳩咪","ico":"💖","time":"11:30","title":"感謝大家的協助"}],"title":"興大諾貝爾獎得主講座 撤場"}],"host":"Dr. Hsiao-Mei (Sherry) Cho","speaker":"Dr. John Clarke | 2025諾貝爾物理學獎得主","title":"興大諾貝爾獎得主講座 進場","todo":[],"upd":"2026/10/31"},"tasks":[{"done":false,"due":"","note":"小隊長 庭慈/彥君/俊禹/士維","order":1793457010559,"owner":"","phase":"會前準備","title":"工作人員分組 - 庭慈","id":"1foj6l1cv5afiior3khs"},{"done":false,"due":"2026-11-12","note":"","order":1793484245373,"owner":"","phase":"會前準備","title":"電梯小童 - 隨時協助電梯操作","id":"d45p6s4dp4pahbdmpyl0"},{"done":false,"due":"","note":"","order":1793484344860,"owner":"","phase":"會前準備","title":"將所有準備印刷稿件上傳至完稿區","id":"o3vslop9kmop16c5xfmh"},{"done":false,"doneAt":null,"due":"2026-11-10","note":"","order":1,"owner":"","phase":"會前準備","title":"11/12 13:00-13:30 貴賓室準備點心咖啡","id":"t01"},{"done":false,"due":"2026-11-05","note":"","order":3,"owner":"","phase":"會前準備","title":"與主持人 Cho 博士確認流程稿","id":"t03"},{"done":true,"doneAt":"2026-11-01T07:51:53.396Z","due":"2026-11-02","note":"","order":4,"owner":"","phase":"會前準備","title":"發布講座公告與報名連結","id":"t04"},{"done":true,"doneAt":"2026-10-31T14:14:58.950Z","due":"2026-11-06","note":"11/12 18:00 歡迎晚宴 李方艾美酒店21樓星光廳\n每桌一瓶紅酒/免開瓶費","order":5,"owner":"","phase":"會前準備","title":"台中艾美酒店晚宴：4+1桌（已付訂金14000）每桌16888+10%","id":"t05"},{"done":false,"due":"2026-11-09","note":"","order":6,"owner":"","phase":"會前準備","title":"國際會議廳名牌","id":"t06"},{"done":false,"doneAt":null,"due":"2026-11-06","note":"","order":7,"owner":"","phase":"會前準備","title":"海報印刷 *","id":"t07"},{"done":false,"due":"2026-11-11","note":"11/11 14:00–19:00","order":8,"owner":"","phase":"場地與設備","title":"圖書館 7 樓場地佈置（250 張椅子）","id":"t08"},{"done":false,"due":"2026-11-11","note":"","order":9,"owner":"","phase":"場地與設備","title":"麥克風、投影與錄影設備測試","id":"t09"},{"done":false,"due":"2026-11-11","note":"","order":10,"owner":"","phase":"場地與設備","title":"指示牌與報到桌設置","id":"t10"},{"done":false,"due":"2026-11-12","note":"講座 13:30–16:00","order":11,"owner":"","phase":"活動當天","title":"報到、引導與貴賓接待","id":"t11"},{"done":false,"due":"2026-11-12","note":"","order":12,"owner":"","phase":"活動當天","title":"活動攝影與全程錄影","id":"t12"},{"done":false,"due":"2026-11-20","note":"","order":13,"owner":"","phase":"會後","title":"寄送感謝信給主講人與主持人","id":"t13"},{"done":false,"due":"2026-11-30","note":"","order":14,"owner":"","phase":"會後","title":"經費核銷與成果報告","id":"t14"},{"done":false,"due":"","note":"","order":15,"owner":"","phase":"會前準備","title":"租車（6人座小巴)- 接送 Dr. John Clarke","id":"t15"},{"done":false,"due":"","note":"","order":16,"owner":"","phase":"會前準備","title":"主任一台車 - 接送Dr. John clarke","id":"t16"},{"done":false,"due":"","note":"","order":17,"owner":"","phase":"場地與設備","title":"七樓的小蜜蜂麥克風","id":"t17"},{"done":false,"due":"","note":"","order":18,"owner":"","phase":"會前準備","title":"校長致詞代理人","id":"t18"},{"done":false,"due":"","note":"茶(罐)5份 / 領帶 / 絲巾 / 用餐經費(v)/紅色禮盒 待校慶後確認","order":19,"owner":"","phase":"會前準備","title":"校長室禮物","id":"t19"},{"done":false,"due":"","note":"","order":20,"owner":"","phase":"場地與設備","title":"移動式演講椅(演講用) - 用何主任的那張","id":"t20"},{"done":false,"due":"","note":"","order":21,"owner":"","phase":"會前準備","title":"校長致詞稿、採訪稿、採訪問題","id":"t21"},{"done":false,"due":"","note":"","order":22,"owner":"","phase":"會前準備","title":"訪問稿問題","id":"t22"},{"done":false,"due":"","note":"","order":23,"owner":"","phase":"場地與設備","title":"備高腳椅","id":"t23"},{"done":false,"due":"","note":"","order":24,"owner":"","phase":"會前準備","title":"至台中艾美酒店迎接貴賓：採用 8 人座車，或借用校友號？","id":"t24"},{"done":false,"due":"","note":"Dr. John Clarke 喜歡","order":25,"owner":"","phase":"會前準備","title":"休息時間準備咖啡、蛋糕（放VIP桌上）","id":"t25"},{"done":false,"due":"","note":"","order":26,"owner":"","phase":"場地與設備","title":"第一會議室或貴賓室：採訪用中型背板","id":"t26"},{"done":false,"due":"","note":"","order":27,"owner":"","phase":"會前準備","title":"英文司儀（星期二下午兩點）前瞻理工中心面談","id":"t27"},{"done":false,"due":"","note":"預計3人","order":28,"owner":"","phase":"會前準備","title":"儀禮大使 預計三人 （星期三下午一點） 與負責人面談","id":"t28"},{"done":false,"due":"","note":"","order":1793519549718,"owner":"","phase":"會前準備","title":"星期五中午 會前會-前瞻理工中心","id":"t7zppspn2lq1i2dre47y"},{"done":false,"due":"","note":"","order":1793519510719,"owner":"","phase":"會前準備","title":"600份小點心","id":"z43o27qt945zkei23om9"}],"folders":[{"name":"座位分布區範例","note":"圖書館7樓","order":1793495837828,"pinBottom":false,"url":"https://drive.google.com/file/d/1a2dSRmNjdyfYGR6hW20YmsJRU23aZGHT/view?usp=sharing","id":"3opa83lg1xtne2qev6g2"},{"name":"興見未來-展區資料","note":"非工作人員 請勿私自修改新增資料","order":1,"pinBottom":false,"url":"https://drive.google.com/drive/folders/1ANJs6Pmqd3j3ovX4shvCsV7iKL_pCxIZ?usp=drive_link","id":"f01"},{"name":"科博館提供-量力而微資料夾","note":"科博館提供，不得刪減","order":2,"pinBottom":true,"url":"https://drive.google.com/drive/folders/115Wc1XEI8Hz4QxR5JdpM7rNPrCCM2KtP?usp=drive_link","id":"f02"},{"name":"興見未來 - 設計稿件","note":"非工作人員 請勿私自修改新增資料","order":3,"pinBottom":false,"url":"https://drive.google.com/drive/folders/1tZ2pPW3_3R7Joy9YiOZshGanqQVT2SZu","id":"f03"},{"name":"興見未來- 影片區","note":"非工作人員 請勿私自修改新增資料","order":4,"pinBottom":false,"url":"https://drive.google.com/drive/folders/1KgB3026j6dNZfm4ChKX9zapNNY-7vwyk","id":"f04"},{"name":"布萊恩照片集","note":"","order":6,"pinBottom":false,"url":"https://sec.video.nchu.edu.tw/media/1805?page=1&displayMode=m","id":"f05"},{"name":"興見未來-完稿區","note":"","order":5,"pinBottom":false,"url":"https://drive.google.com/drive/folders/1eVHvpy58E6oSy_tWFbu9dYwM0nIoXiGG?usp=drive_link","id":"f06"},{"name":"電子邀請函 | 回函 (僅供閱讀用)","note":"","order":1793496039005,"pinBottom":false,"url":"https://fayefylee.github.io/nobel-2026/invite/stats.html","id":"msz76ytia16koi6yc9zk"},{"name":"電子邀請函 | 僅供主任邀請VIP用","note":"一般報名表另設","order":1793495946117,"pinBottom":false,"url":"https://fayefylee.github.io/nobel-2026/invite/","id":"x8j0322w5iu7etw3wj50"}],"staff":[{"date":"11/10","name":"金旺","note":"","order":1,"task":"場佈 - 廠商進駐布置","time":"10:00-17:00","id":"s01"},{"date":"11/10","name":"彥君","note":"","order":2,"task":"電腦軟硬體第一次測試","time":"14:00-15:00","id":"s02"},{"date":"11/11","name":"孟昌老師/凡瑋老師","note":"","order":3,"task":"儀禮大使彩排 / 司儀彩排","time":"14:20-16:00","id":"s03"},{"date":"11/12","name":"吳秋賢教授/何孟書主任","note":"","order":4,"task":"至台中艾美酒店迎接貴賓前往中興大學","time":"12:30-13:00","id":"s04"},{"date":"11/12","name":"彥君/士維","note":"","order":5,"task":"抵達後進行簡報設備準備","time":"12:30-13:00","id":"s05"},{"date":"11/12","name":"孟昌老師/凡瑋老師/文君","note":"","order":6,"task":"協助安排聽講團體合照動線","time":"15:30-16:00","id":"s06"}],"at":"11/02 05:57"};var DEFAULT=SNAP.schedule;/*ENDSNAP*/
+/*SNAP*/var SNAP={"schedule":{"days":[{"date":"2026-11-10","info":"","items":[{"desc":"廠商進場 一樓電梯廊間/會場/演講廳場內/七樓展區","ico":"🏗️","time":"10:00-17:00","title":"場佈 - 廠商進駐布置(金旺)"},{"desc":"1. 主測翻譯軟體 - 主螢幕為演講者投影 兩側副螢幕為翻譯投影\n2. 若需另借軟硬體請立即提出說明","ico":"🖥️","time":"14:00-15:00","title":"電腦軟硬體第一次測試(彥君)"}]},{"date":"2026-11-11","info":"","items":[{"desc":"地點：前瞻理工中心\n說明活動流程與各組工作分配","ico":"📋","time":"13:00-13:40","title":"工作人員會前說明會"},{"desc":"準備協助搬運折疊椅至圖書館七樓","ico":"📍","time":"13:50-14:00","title":"工作人員惠蓀堂集合"},{"desc":"地點：圖書館七樓國際演講廳\n投影螢幕/講者螢幕/中英文翻譯","ico":"💻","time":"14:00-16:00","title":"電腦測試"},{"desc":"地點：圖書館七樓國際演講廳","ico":"🎥","time":"14:00","title":"攝影組測試"},{"desc":"地點：圖書館七樓國際演講廳","ico":"🗺️","time":"14:00-15:00","title":"標示高中生座位分區"},{"desc":"地點：惠蓀堂至圖書館七樓國際演講廳","ico":"🚚","time":"14:00-14:30","title":"協助搬運摺疊椅上車並至送至圖書館七樓"},{"desc":"地點：圖書館七樓國際演講廳\n全程彩排","ico":"🎭","time":"14:20-16:00","title":"儀禮大使彩排 / 司儀彩排 / (孟昌老師 / 凡瑋老師)"},{"cls":"hl","desc":"地點：圖書館七樓國際演講廳\n撤換椅子/ 折疊椅共計250張","ico":"🪑","time":"14:30-16:00","title":"椅子佈置"}]},{"date":"2026-11-12","info":"13:30–16:00｜國立中興大學圖書館 7 樓","items":[{"desc":"10:00 集合及活動流程演練\n10:30 攝影組/電腦組(含燈光)測試/各組準備\n11:30 工作人員用餐","ico":"📍","time":"10:00-12:30","title":"工作人員集合"},{"desc":"抵達後進行簡報設備準備（彥君/士維）","ico":"🚌","time":"12:30-13:00","title":"至台中艾美酒店迎接貴賓前往中興大學(吳秋賢教授/何孟書主任)"},{"cls":"hl","desc":"引導學生上7樓 並在規劃區域內入座","ico":"🎒","time":"12:30-13:00","title":"高中生抵達會場"},{"ico":"🚘","time":"13:00","title":"Dr. John Clarke 及貴賓抵達中興大學"},{"pre":"貴賓室休息","time":"13:00-13:30"},{"cls":"main","desc":"致歡迎詞：詹富智校長","ico":"🎤","tag":"主要活動","time":"13:30-13:40","title":"貴賓介紹/致贈惠蓀獎座"},{"cls":"main","desc":"講者：Dr. John Clarke （2025年諾貝爾物理學獎得主）\n主持人：Dr. Hsiao-Mei (Sherry) Cho\n講題：From SLUGs to Macroscopic Quantum Phenomena","ico":"🏆","sub":"(含問答)","tag":"主要活動","time":"13:40-14:30","title":"諾貝爾獎得主演講"},{"ico":"☕","time":"14:30-14:40","title":"中場休息"},{"cls":"main","desc":"講者：DR. Sam Benz\n主持人：Dr. Hsiao-Mei (Sherry) Cho\n講題：Superconducting Devices: Principles and Real-World Applications","ico":"🔬","sub":"(含問答)","tag":"主要活動","time":"14:40-15:20","title":"特邀演講"},{"desc":"閉幕及嘉賓離席/欲合照的請留下並配合人員安排/不接受單獨合照","ico":"📷","time":"15:20-15:30","title":"閉幕"},{"desc":"動線：由孟昌老師/凡瑋老師/文君協助安排聽講團體，一組一組上台與講者合照後，離開會場至一樓搭車","ico":"📸","time":"15:30-16:00","title":"合照（於演講廳內）"},{"ico":"📹","time":"16:00-16:30","title":"採訪"},{"desc":"地點：台中艾美酒店21樓星空廳","ico":"🍽️","sub":"(台中艾美酒店)","time":"18:00","title":"歡迎晚宴"}],"special":true,"title":"NCHU Nobel Laureate Lecture 2026"},{"date":"2026-11-13","info":"","items":[{"ico":"🚚","time":"09:30-10:30","title":"協助將椅子搬回惠蓀堂"},{"desc":"七樓展區及一樓電梯廊間","ico":"🧰","time":"10:00","title":"撤展"},{"desc":"愛你鳩咪","ico":"💖","time":"11:30","title":"感謝大家的協助"}],"title":"興大諾貝爾獎得主講座 撤場"}],"host":"Dr. Hsiao-Mei (Sherry) Cho","speaker":"Dr. John Clarke | 2025諾貝爾物理學獎得主","title":"興大諾貝爾獎得主講座 進場","todo":[],"upd":"2026/10/31"},"tasks":[{"done":false,"due":"","note":"小隊長 庭慈/彥君/俊禹/士維","order":1793457010559,"owner":"","phase":"會前準備","title":"工作人員分組 - 庭慈","id":"1foj6l1cv5afiior3khs"},{"done":false,"due":"2026-11-12","note":"","order":1793484245373,"owner":"","phase":"會前準備","title":"電梯小童 - 隨時協助電梯操作","id":"d45p6s4dp4pahbdmpyl0"},{"done":false,"due":"","note":"","order":1793484344860,"owner":"","phase":"會前準備","title":"將所有準備印刷稿件上傳至完稿區","id":"o3vslop9kmop16c5xfmh"},{"done":false,"doneAt":null,"due":"2026-11-10","note":"","order":1,"owner":"","phase":"會前準備","title":"11/12 13:00-13:30 貴賓室準備點心咖啡","id":"t01"},{"done":false,"due":"2026-11-05","note":"","order":3,"owner":"","phase":"會前準備","title":"與主持人 Cho 博士確認流程稿","id":"t03"},{"done":true,"doneAt":"2026-11-01T07:51:53.396Z","due":"2026-11-02","note":"","order":4,"owner":"","phase":"會前準備","title":"發布講座公告與報名連結","id":"t04"},{"done":true,"doneAt":"2026-10-31T14:14:58.950Z","due":"2026-11-06","note":"11/12 18:00 歡迎晚宴 李方艾美酒店21樓星光廳\n每桌一瓶紅酒/免開瓶費","order":5,"owner":"","phase":"會前準備","title":"台中艾美酒店晚宴：4+1桌（已付訂金14000）每桌16888+10%","id":"t05"},{"done":false,"due":"2026-11-09","note":"","order":6,"owner":"","phase":"會前準備","title":"國際會議廳名牌","id":"t06"},{"done":false,"doneAt":null,"due":"2026-11-06","note":"","order":7,"owner":"","phase":"會前準備","title":"海報印刷 *","id":"t07"},{"done":false,"due":"2026-11-11","note":"11/11 14:00–19:00","order":8,"owner":"","phase":"場地與設備","title":"圖書館 7 樓場地佈置（250 張椅子）","id":"t08"},{"done":false,"due":"2026-11-11","note":"","order":9,"owner":"","phase":"場地與設備","title":"麥克風、投影與錄影設備測試","id":"t09"},{"done":false,"due":"2026-11-11","note":"","order":10,"owner":"","phase":"場地與設備","title":"指示牌與報到桌設置","id":"t10"},{"done":false,"due":"2026-11-12","note":"講座 13:30–16:00","order":11,"owner":"","phase":"活動當天","title":"報到、引導與貴賓接待","id":"t11"},{"done":false,"due":"2026-11-12","note":"","order":12,"owner":"","phase":"活動當天","title":"活動攝影與全程錄影","id":"t12"},{"done":false,"due":"2026-11-20","note":"","order":13,"owner":"","phase":"會後","title":"寄送感謝信給主講人與主持人","id":"t13"},{"done":false,"due":"2026-11-30","note":"","order":14,"owner":"","phase":"會後","title":"經費核銷與成果報告","id":"t14"},{"done":false,"due":"","note":"","order":15,"owner":"","phase":"會前準備","title":"租車（6人座小巴)- 接送 Dr. John Clarke","id":"t15"},{"done":false,"due":"","note":"","order":16,"owner":"","phase":"會前準備","title":"主任一台車 - 接送Dr. John clarke","id":"t16"},{"done":false,"due":"","note":"","order":17,"owner":"","phase":"場地與設備","title":"七樓的小蜜蜂麥克風","id":"t17"},{"done":false,"due":"","note":"","order":18,"owner":"","phase":"會前準備","title":"校長致詞代理人","id":"t18"},{"done":false,"due":"","note":"茶(罐)5份 / 領帶 / 絲巾 / 用餐經費(v)/紅色禮盒 待校慶後確認","order":19,"owner":"","phase":"會前準備","title":"校長室禮物","id":"t19"},{"done":false,"due":"","note":"","order":20,"owner":"","phase":"場地與設備","title":"移動式演講椅(演講用) - 用何主任的那張","id":"t20"},{"done":false,"due":"","note":"","order":21,"owner":"","phase":"會前準備","title":"校長致詞稿、採訪稿、採訪問題","id":"t21"},{"done":false,"due":"","note":"","order":22,"owner":"","phase":"會前準備","title":"訪問稿問題","id":"t22"},{"done":false,"due":"","note":"","order":23,"owner":"","phase":"場地與設備","title":"備高腳椅","id":"t23"},{"done":false,"due":"","note":"","order":24,"owner":"","phase":"會前準備","title":"至台中艾美酒店迎接貴賓：採用 8 人座車，或借用校友號？","id":"t24"},{"done":false,"due":"","note":"Dr. John Clarke 喜歡","order":25,"owner":"","phase":"會前準備","title":"休息時間準備咖啡、蛋糕（放VIP桌上）","id":"t25"},{"done":false,"due":"","note":"","order":26,"owner":"","phase":"場地與設備","title":"第一會議室或貴賓室：採訪用中型背板","id":"t26"},{"done":false,"due":"","note":"","order":27,"owner":"","phase":"會前準備","title":"英文司儀（星期二下午兩點）前瞻理工中心面談","id":"t27"},{"done":false,"due":"","note":"預計3人","order":28,"owner":"","phase":"會前準備","title":"儀禮大使 預計三人 （星期三下午一點） 與負責人面談","id":"t28"},{"done":false,"due":"","note":"","order":1793519549718,"owner":"","phase":"會前準備","title":"星期五中午 會前會-前瞻理工中心","id":"t7zppspn2lq1i2dre47y"},{"done":false,"due":"","note":"","order":1793519510719,"owner":"","phase":"會前準備","title":"600份小點心","id":"z43o27qt945zkei23om9"}],"folders":[{"name":"座位分布區範例","note":"圖書館7樓","order":1793495837828,"pinBottom":false,"url":"https://drive.google.com/file/d/1a2dSRmNjdyfYGR6hW20YmsJRU23aZGHT/view?usp=sharing","id":"3opa83lg1xtne2qev6g2"},{"name":"興見未來-展區資料","note":"非工作人員 請勿私自修改新增資料","order":1,"pinBottom":false,"url":"https://drive.google.com/drive/folders/1ANJs6Pmqd3j3ovX4shvCsV7iKL_pCxIZ?usp=drive_link","id":"f01"},{"name":"科博館提供-量力而微資料夾","note":"科博館提供，不得刪減","order":2,"pinBottom":true,"url":"https://drive.google.com/drive/folders/115Wc1XEI8Hz4QxR5JdpM7rNPrCCM2KtP?usp=drive_link","id":"f02"},{"name":"興見未來 - 設計稿件","note":"非工作人員 請勿私自修改新增資料","order":3,"pinBottom":false,"url":"https://drive.google.com/drive/folders/1tZ2pPW3_3R7Joy9YiOZshGanqQVT2SZu","id":"f03"},{"name":"興見未來- 影片區","note":"非工作人員 請勿私自修改新增資料","order":4,"pinBottom":false,"url":"https://drive.google.com/drive/folders/1KgB3026j6dNZfm4ChKX9zapNNY-7vwyk","id":"f04"},{"name":"布萊恩照片集","note":"","order":6,"pinBottom":false,"url":"https://sec.video.nchu.edu.tw/media/1805?page=1&displayMode=m","id":"f05"},{"name":"興見未來-完稿區","note":"","order":5,"pinBottom":false,"url":"https://drive.google.com/drive/folders/1eVHvpy58E6oSy_tWFbu9dYwM0nIoXiGG?usp=drive_link","id":"f06"},{"name":"電子邀請函 | 回函 (僅供閱讀用)","note":"","order":1793496039005,"pinBottom":false,"url":"https://fayefylee.github.io/nobel-2026/invite/stats.html","id":"msz76ytia16koi6yc9zk"},{"name":"電子邀請函 | 僅供主任邀請VIP用","note":"一般報名表另設","order":1793495946117,"pinBottom":false,"url":"https://fayefylee.github.io/nobel-2026/invite/","id":"x8j0322w5iu7etw3wj50"}],"staff":[{"date":"11/10","name":"金旺","note":"","order":1,"task":"場佈 - 廠商進駐布置","time":"10:00-17:00","id":"s01"},{"date":"11/10","name":"彥君","note":"","order":2,"task":"電腦軟硬體第一次測試","time":"14:00-15:00","id":"s02"},{"date":"11/11","name":"孟昌老師/凡瑋老師","note":"","order":3,"task":"儀禮大使彩排 / 司儀彩排","time":"14:20-16:00","id":"s03"},{"date":"11/12","name":"吳秋賢教授/何孟書主任","note":"","order":4,"task":"至台中艾美酒店迎接貴賓前往中興大學","time":"12:30-13:00","id":"s04"},{"date":"11/12","name":"彥君/士維","note":"","order":5,"task":"抵達後進行簡報設備準備","time":"12:30-13:00","id":"s05"},{"date":"11/12","name":"孟昌老師/凡瑋老師/文君","note":"","order":6,"task":"協助安排聽講團體合照動線","time":"15:30-16:00","id":"s06"}],"people":[],"at":"11/02 06:01"};var DEFAULT=SNAP.schedule;/*ENDSNAP*/
 var WD=["日","一","二","三","四","五","六"];
 var S=clone(DEFAULT),backup=null,editing=false,cur=0,dbDoc=null,toastT=null;
 function clone(o){return JSON.parse(JSON.stringify(o))}
@@ -547,7 +575,8 @@ db.collection("folders").onSnapshot(function(s){items=s.docs.map(function(d){ret
 <script type="text/plain" id="pagesrc"></script>
 <script>
 (function(){
-var items=[],canW=true,db=null,ed=null,cDel=false,view="person";
+var LV=["總指揮","分項指揮","分項小組長","隊員"];
+var items=[],people=[],canW=true,db=null,ed=null,pe=null,cDel=false,pDel=false,view="person";
 try{var sv=localStorage.getItem("st-view");if(sv==="time"||sv==="person")view=sv}catch(e){}
 function g(id){return document.getElementById(id)}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
@@ -555,25 +584,52 @@ function names(s){return String(s||"").split(/[\/、,，]+/).map(function(x){ret
 function tk(t){var m=String(t||"").match(/(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):99999}
 function dk(d){var m=String(d||"").match(/(\d{1,2})\/(\d{1,2})/);return m?(+m[1])*100+(+m[2]):99999}
 function cmp(a,b){return dk(a.date)-dk(b.date)||tk(a.time)-tk(b.time)||((a.order||0)-(b.order||0))}
-function row(it,byTime){var li=el("li","ck-li"),b=el("div","ck-b"+(canW?" edit":""));
+function pcmp(a,b){return LV.indexOf(a.level)-LV.indexOf(b.level)||((a.order||0)-(b.order||0))||a.name.localeCompare(b.name,"zh-Hant")}
+var pmap={};
+function lvc(n){var p=pmap[n],i=p?LV.indexOf(p.level):-1;return i<0?"lvn":"lv"+i}
+function legend(){var L=g("stLeg");L.textContent="";LV.forEach(function(l,i){var s=el("span","st-badge lv"+i,l);L.append(s)})}
+function row(it,byTime){var li=el("li",null),b=el("div","st-row"+(canW?" edit":""));
 b.append(el("div","ck-t",it.task||""));
 var sub=el("div","ck-sub"),when=(byTime?[it.time]:[it.date,it.time]).filter(Boolean).join(" ");
 if(when)sub.append(el("span","ck-due",when));
-if(byTime&&it.name)sub.append(el("span",null,it.name));
+if(byTime)names(it.name).forEach(function(n){sub.append(el("span","st-nm "+lvc(n),n))});
 if(sub.childNodes.length)b.append(sub);
 if(it.note)b.append(el("div","ck-note",it.note));
 if(canW)b.addEventListener("click",function(){openEd(it)});
 li.append(b);return li}
-function render(){g("stAdd").hidden=!canW;g("stRo").hidden=canW;
+function render(){g("stAdd").hidden=!canW;g("stAddP").hidden=!canW;g("stRo").hidden=canW;legend();
 document.querySelectorAll("[data-stv]").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-stv")===view)});
+pmap={};people.forEach(function(p){pmap[p.name]=p});
 var L=g("stList");L.textContent="";
-if(!items.length){L.append(el("div","empty",canW?"還沒有人員分配。按「新增分配」加入第一筆。":"還沒有人員分配。"));return}
+if(!items.length&&!people.length){L.append(el("div","empty",canW?"還沒有人員。先按「新增人員」設定級別，再按「新增分配」加入工作項目。":"還沒有人員分配。"));return}
+if(view==="time")return renderTime(L);
+var asg={};items.forEach(function(it){names(it.name).forEach(function(n){(asg[n]=asg[n]||[]).push(it)})});
+var seen={};
+function card(n,sub){seen[n]=1;var p=pmap[n],c=el("div","st-pc "+lvc(n)+(sub?" sub":"")),h=el("div","st-hd"+(canW?" edit":"")),nm=el("span","st-name",n);h.append(nm);
+if(p)h.append(el("span","st-badge "+lvc(n),p.level));else h.append(el("span","st-badge lvn","未分級"));
+if(canW)h.addEventListener("click",function(){openP(p||null,n)});c.append(h);
+var a=(asg[n]||[]).slice().sort(cmp);
+if(a.length){var ul=el("ul","st-rows");a.forEach(function(it){ul.append(row(it,false))});c.append(ul)}else c.append(el("div","ck-note","尚無分配的工作項目"));
+return c}
+function sec(title,n){var s=el("section","ck-sec"),h=el("h3",null,title);h.append(el("small",null,n+" 人"));s.append(h);return s}
+var bossP=people.filter(function(p){return p.level===LV[0]}).sort(pcmp);
+if(bossP.length){var s0=sec(LV[0],bossP.length);bossP.forEach(function(p){s0.append(card(p.name))});L.append(s0)}
+var leaders=people.filter(function(p){return p.level===LV[1]}).sort(pcmp),lnames={};leaders.forEach(function(p){lnames[p.name]=1});
+leaders.forEach(function(p){var mem=people.filter(function(m){return(m.level===LV[2]||m.level===LV[3])&&m.parent===p.name}).sort(pcmp);
+var s=sec("分項："+p.name,1+mem.length);s.classList.add("st-unit");s.append(card(p.name));
+mem.forEach(function(m){s.append(card(m.name,true))});L.append(s)});
+var orph=people.filter(function(p){return(p.level===LV[2]||p.level===LV[3])&&!lnames[p.parent]}).sort(pcmp);
+if(orph.length){var so=sec("未歸屬分項",orph.length);orph.forEach(function(p){so.append(card(p.name))});L.append(so)}
+var rest=[];Object.keys(asg).forEach(function(n){if(!seen[n]&&!pmap[n])rest.push(n)});
+people.forEach(function(p){if(!seen[p.name])rest.push(p.name)});
+if(rest.length){rest.sort(function(a,b){return a.localeCompare(b,"zh-Hant")});var sr=sec("未分級",rest.length);rest.forEach(function(n){sr.append(card(n))});L.append(sr)}}
+function renderTime(L){
+if(!items.length){L.append(el("div","empty","還沒有工作項目。"));return}
 var groups=[],map={};
-function add(k,it){if(!map[k]){map[k]=[];groups.push({k:k,a:map[k]})}map[k].push(it)}
-items.forEach(function(it){if(view==="person"){var ns=names(it.name);if(!ns.length)ns=["（未填姓名）"];ns.forEach(function(n){add(n,it)})}else add(it.date||"（未填日期）",it)});
-if(view==="person")groups.sort(function(a,b){return a.k.localeCompare(b.k,"zh-Hant")});else groups.sort(function(a,b){return dk(a.k)-dk(b.k)});
+items.forEach(function(it){var k=it.date||"（未填日期）";if(!map[k]){map[k]=[];groups.push({k:k,a:map[k]})}map[k].push(it)});
+groups.sort(function(a,b){return dk(a.k)-dk(b.k)});
 groups.forEach(function(gr){var s=el("section","ck-sec"),h=el("h3",null,gr.k);h.append(el("small",null,gr.a.length+" 項"));s.append(h);
-var ul=el("ul","ck-ul");gr.a.slice().sort(cmp).forEach(function(it){ul.append(row(it,view==="time"))});s.append(ul);L.append(s)})}
+var ul=el("ul","ck-ul st-tl");gr.a.slice().sort(cmp).forEach(function(it){var li=row(it,true);li.className="ck-li";ul.append(li)});s.append(ul);L.append(s)})}
 function err(e){if(e&&e.code==="invalid_argument"){canW=false;render();g("stStatus").textContent="你目前只有查閱權限，無法修改。"}else g("stStatus").textContent="儲存失敗，請稍後再試。"+(e&&e.code?"（"+e.code+"）":"")}
 function openEd(it){ed=it||null;cDel=false;g("stDlgT").textContent=it?"編輯分配":"新增分配";
 g("ste-name").value=it&&it.name||"";g("ste-date").value=it&&it.date||"";g("ste-time").value=it&&it.time||"";g("ste-task").value=it&&it.task||"";g("ste-note").value=it&&it.note||"";
@@ -588,10 +644,28 @@ g("ste-cancel").addEventListener("click",function(){g("stDlg").close()});
 g("ste-del").addEventListener("click",async function(){if(!cDel){cDel=true;g("ste-del").textContent="再按一次確認刪除";return}
 try{await db.doc("staff/"+ed.id).delete();g("stDlg").close()}catch(e){g("stDlg").close();err(e)}});
 g("stAdd").addEventListener("click",function(){openEd(null)});
+function fillParent(sel){var s=g("pg-parent");s.textContent="";var o=el("option",null,"（無）");o.value="";s.append(o);
+people.filter(function(p){return p.level===LV[1]}).sort(pcmp).forEach(function(p){var o2=el("option",null,p.name);o2.value=p.name;s.append(o2)});s.value=sel||""}
+function togParent(){g("pg-parent-wrap").hidden=!(g("pg-level").value===LV[2]||g("pg-level").value===LV[3])}
+function openP(p,nm){pe=p||null;pDel=false;g("pgDlgT").textContent=p?"編輯人員":"新增人員";
+g("pg-name").value=p?p.name:(nm||"");g("pg-level").value=p?p.level:LV[3];fillParent(p&&p.parent||"");togParent();
+g("pg-del").hidden=!p;g("pg-del").textContent="刪除人員";g("pgDlg").showModal();g("pg-name").focus()}
+g("pg-level").addEventListener("change",togParent);
+g("pgForm").addEventListener("submit",async function(ev){ev.preventDefault();
+var d={name:g("pg-name").value.trim(),level:g("pg-level").value,parent:(g("pg-level").value===LV[2]||g("pg-level").value===LV[3])?g("pg-parent").value:""};
+if(!d.name)return;
+g("pg-save").disabled=true;
+try{if(pe)await db.doc("people/"+pe.id).update(d);else await db.collection("people").add(Object.assign(d,{order:Date.now()}));g("pgDlg").close()}catch(e){g("pgDlg").close();err(e)}
+g("pg-save").disabled=false});
+g("pg-cancel").addEventListener("click",function(){g("pgDlg").close()});
+g("pg-del").addEventListener("click",async function(){if(!pDel){pDel=true;g("pg-del").textContent="再按一次確認刪除（工作項目不會刪）";return}
+try{await db.doc("people/"+pe.id).delete();g("pgDlg").close()}catch(e){g("pgDlg").close();err(e)}});
+g("stAddP").addEventListener("click",function(){openP(null,"")});
 document.querySelectorAll("[data-stv]").forEach(function(b){b.addEventListener("click",function(){view=b.getAttribute("data-stv");try{localStorage.setItem("st-view",view)}catch(e){}render()})});
 (async function(){try{db=window.claude&&await window.claude.use("db")}catch(e){db=null}
-if(!db){canW=false;items=(window.SNAP&&SNAP.staff)||[];render();g("stStatus").style.color="var(--mute)";g("stStatus").textContent=(window.claude?"目前未登入，顯示 ":"最後更新 ")+((window.SNAP&&SNAP.at)||"")+(window.claude?" 更新的版本（僅供查閱）。":"（僅供查閱）");return}
-db.collection("staff").onSnapshot(function(s){items=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});render()},function(){g("stStatus").textContent="連線中斷，請重新整理頁面。"})})();
+if(!db){canW=false;items=(window.SNAP&&SNAP.staff)||[];people=(window.SNAP&&SNAP.people)||[];render();g("stStatus").style.color="var(--mute)";g("stStatus").textContent=(window.claude?"目前未登入，顯示 ":"最後更新 ")+((window.SNAP&&SNAP.at)||"")+(window.claude?" 更新的版本（僅供查閱）。":"（僅供查閱）");return}
+db.collection("staff").onSnapshot(function(s){items=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});render()},function(){g("stStatus").textContent="連線中斷，請重新整理頁面。"});
+db.collection("people").onSnapshot(function(s){people=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});render()},function(){g("stStatus").textContent="連線中斷，請重新整理頁面。"})})();
 })();
 </script>
 
@@ -599,13 +673,13 @@ db.collection("staff").onSnapshot(function(s){items=s.docs.map(function(d){retur
 (function(){
 var SK='<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>';
 var K1="__"+"SNAP__",K2="__"+"SRC__";
-var live={schedule:null,tasks:null,folders:null,staff:null},dismissed=false,busy=false,art=null,webMeta=undefined,dbRef=null;
+var live={schedule:null,tasks:null,folders:null,staff:null,people:null},dismissed=false,busy=false,art=null,webMeta=undefined,dbRef=null;
 function g(id){return document.getElementById(id)}
 function stable(v){if(Array.isArray(v))return"["+v.map(stable).join(",")+"]";if(v&&typeof v==="object")return"{"+Object.keys(v).sort().filter(function(k){return v[k]!==undefined}).map(function(k){return JSON.stringify(k)+":"+stable(v[k])}).join(",")+"}";return JSON.stringify(v)}
 function byId(a){return(a||[]).slice().sort(function(x,y){return x.id<y.id?-1:1})}
-function differs(){var S=window.SNAP||{};return stable(live.schedule)!==stable(S.schedule)||stable(byId(live.tasks))!==stable(byId(S.tasks))||stable(byId(live.folders))!==stable(byId(S.folders))||stable(byId(live.staff))!==stable(byId(S.staff))}
-function hashLive(boss){var s=stable({schedule:live.schedule,tasks:byId(live.tasks),folders:boss?[]:byId(live.folders),staff:boss?[]:byId(live.staff)}),h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
-function check(){if(dismissed||busy||!live.schedule||!live.tasks||!live.folders||!live.staff||webMeta===undefined)return;
+function differs(){var S=window.SNAP||{};return stable(live.schedule)!==stable(S.schedule)||stable(byId(live.tasks))!==stable(byId(S.tasks))||stable(byId(live.folders))!==stable(byId(S.folders))||stable(byId(live.staff))!==stable(byId(S.staff))||stable(byId(live.people))!==stable(byId(S.people))}
+function hashLive(boss){var s=stable({schedule:live.schedule,tasks:byId(live.tasks),folders:boss?[]:byId(live.folders),staff:boss?[]:byId(live.staff),people:boss?[]:byId(live.people)}),h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
+function check(){if(dismissed||busy||!live.schedule||!live.tasks||!live.folders||!live.staff||!live.people||webMeta===undefined)return;
 var d=differs(),wb=!webMeta||webMeta.hashBoss!==hashLive(true),wt=!webMeta||webMeta.hashTeam!==hashLive(false),w=wb||wt;
 g("pubBar").hidden=!(d||w);g("pubGo").hidden=!d;g("webGoBoss").hidden=!wb;g("webGoTeam").hidden=!wt;
 var t=[];if(d)t.push("Claude 頁面的公開版本還是 "+((window.SNAP&&SNAP.at)||"")+" 的內容。");
@@ -621,7 +695,7 @@ try{
 if(!art)art=await window.claude.use("artifact");
 if(!art)throw{code:"not_granted"};
 var tpl=b64dec(g("pagesrc").textContent);
-var snap={schedule:live.schedule,tasks:byId(live.tasks),folders:byId(live.folders),staff:byId(live.staff),at:stamp()};
+var snap={schedule:live.schedule,tasks:byId(live.tasks),folders:byId(live.folders),staff:byId(live.staff),people:byId(live.people),at:stamp()};
 var js="var SNAP="+JSON.stringify(snap).replace(/<\//g,"<\\/")+";var DEFAULT=SNAP.schedule;";
 var page=tpl.split(K1).join(js).split(K2).join(b64enc(tpl));
 await art.publish(SK+page+"</body></html>");
@@ -631,11 +705,11 @@ g("pubTxt").textContent=c==="not_granted"||c==="not_writer"?"你沒有更新公�
 if(!window.claude)document.querySelectorAll(".cl-only").forEach(function(b){b.hidden=true});
 var dlns=null;
 async function dlWeb(boss){
-if(!live.schedule||!live.tasks||!live.folders||!live.staff){toast2("資料還在載入，請稍候再按一次。");return}
+if(!live.schedule||!live.tasks||!live.folders||!live.staff||!live.people){toast2("資料還在載入，請稍候再按一次。");return}
 var fn=boss?"index.html":"team.html";
 try{if(!dlns)dlns=await window.claude.use("downloads");if(!dlns){toast2("此環境無法下載。");return}
 var tpl=b64dec(g("pagesrc").textContent);
-var snap={schedule:live.schedule,tasks:byId(live.tasks),folders:boss?[]:byId(live.folders),staff:boss?[]:byId(live.staff),at:stamp()};if(boss)snap.hideFiles=true;
+var snap={schedule:live.schedule,tasks:byId(live.tasks),folders:boss?[]:byId(live.folders),staff:boss?[]:byId(live.staff),people:boss?[]:byId(live.people),at:stamp()};if(boss)snap.hideFiles=true;
 var js="var SNAP="+JSON.stringify(snap).replace(/<\//g,"<\\/")+";var DEFAULT=SNAP.schedule;";
 var page=tpl.split(K1).join(js).split(K2).join("");
 var doc='<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"></head><body>'+page+'</body></html>';
@@ -654,6 +728,7 @@ db.doc("schedule/main").onSnapshot(function(s){live.schedule=s.exists?s.data():n
 db.collection("tasks").onSnapshot(function(s){live.tasks=s.docs.map(function(d){return Object.assign({},d.data(),{id:d.id})});check()},function(){});
 db.collection("folders").onSnapshot(function(s){live.folders=s.docs.map(function(d){return Object.assign({},d.data(),{id:d.id})});check()},function(){});
 db.collection("staff").onSnapshot(function(s){live.staff=s.docs.map(function(d){return Object.assign({},d.data(),{id:d.id})});check()},function(){});
+db.collection("people").onSnapshot(function(s){live.people=s.docs.map(function(d){return Object.assign({},d.data(),{id:d.id})});check()},function(){});
 })();
 })();
 </script>
