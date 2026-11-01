@@ -176,8 +176,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .st-rows{list-style:none;margin:6px 0 0;padding:0}
 .st-rows li{padding:6px 0;border-top:1px solid var(--line)}
 .st-rows li:first-child{border-top:0}
-.st-unit{border:1px solid var(--line);border-radius:12px;padding:6px 10px 2px;margin-top:14px;background:var(--hl)}
-.st-unit>h3{margin-top:6px}
+.uc0{--uc:#c28a00}.uc1{--uc:#0f8b8d}.uc2{--uc:#5046b8}.uc3{--uc:#c2457a}.uc4{--uc:#d2691e}.uc5{--uc:#6b7280}.uc6{--uc:#2e8b57}.uc7{--uc:#8a5a2b}
+.st-unit{border:2px solid var(--uc);border-radius:12px;padding:6px 10px 2px;margin-top:14px;background:color-mix(in srgb,var(--uc) 12%,var(--card))}
+.st-unit>h3{margin-top:6px;color:color-mix(in srgb,var(--uc) 75%,var(--ink));border-bottom-color:var(--uc)}
+.st-ub{font-size:.72rem;border:1px solid var(--uc);background:color-mix(in srgb,var(--uc) 14%,var(--card));color:color-mix(in srgb,var(--uc) 75%,var(--ink));border-radius:6px;padding:0 8px;line-height:1.6;white-space:nowrap}
 </style>
 <div class="wrap" id="app">
 <div class="vsw" role="tablist" aria-label="切換檢視">
@@ -589,7 +591,7 @@ function cmp(a,b){return dk(a.date)-dk(b.date)||tk(a.time)-tk(b.time)||((a.order
 function pcmp(a,b){return LV.indexOf(a.level)-LV.indexOf(b.level)||((a.order||0)-(b.order||0))||a.name.localeCompare(b.name,"zh-Hant")}
 var pmap={};
 function lvc(n){var p=pmap[n],i=p?LV.indexOf(p.level):-1;return i<0?"lvn":"lv"+i}
-function legend(){var L=g("stLeg");L.textContent="";LV.forEach(function(l,i){var s=el("span","st-badge lv"+i,l);L.append(s)})}
+function legend(){var L=g("stLeg");L.textContent="";LV.forEach(function(l,i){var s=el("span","st-badge lv"+i,l);L.append(s)});UNITS.forEach(function(u,i){L.append(el("span","st-ub uc"+i,u[0]))})}
 function row(it,byTime){var li=el("li",null),b=el("div","st-row"+(canW?" edit":""));
 b.append(el("div","ck-t",it.task||""));
 var sub=el("div","ck-sub"),when=(byTime?[it.time]:[it.date,it.time]).filter(Boolean).join(" ");
@@ -620,7 +622,7 @@ var ud={},un=UNITS.map(function(u){ud[u[0]]=u[1];return u[0]});
 function unitOf(p,d){d=d||0;if(!p)return"";if(p.unit)return p.unit;if(p.parent&&d<3)return unitOf(pmap[p.parent],d+1);return""}
 people.forEach(function(p){var u=unitOf(p);if(u&&un.indexOf(u)<0)un.push(u)});
 un.forEach(function(u){var all=people.filter(function(p){return p.level!==LV[0]&&unitOf(p)===u}),leads=all.filter(function(p){return p.level===LV[1]}).sort(pcmp),used={};
-var s=sec(u+(ud[u]?"（"+ud[u]+"）":""),all.length);s.classList.add("st-unit");
+var s=sec(u+(ud[u]?"（"+ud[u]+"）":""),all.length);s.classList.add("st-unit","uc"+(un.indexOf(u)%8));
 leads.forEach(function(l){s.append(card(l.name));used[l.name]=1;
 all.filter(function(m){return m.level!==LV[1]&&m.parent===l.name}).sort(pcmp).forEach(function(m){s.append(card(m.name,true));used[m.name]=1})});
 all.filter(function(m){return!used[m.name]}).sort(pcmp).forEach(function(m){s.append(card(m.name))});
