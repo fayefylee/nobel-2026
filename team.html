@@ -178,7 +178,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .st-tel{color:var(--accent);text-decoration:none;font-weight:600}
 .st-rows li{padding:6px 0;border-top:1px solid var(--line)}
 .st-rows li:first-child{border-top:0}
-.uc0{--uc:#c28a00}.uc1{--uc:#c2457a}.uc2{--uc:#5046b8}.uc3{--uc:#0f8b8d}.uc4{--uc:#d2691e}.uc5{--uc:#2e8b57}.uc6{--uc:#8a5a2b}.uc7{--uc:#6b7280}
+.uc0{--uc:#c28a00}.uc1{--uc:#c2457a}.uc2{--uc:#0f8b8d}.uc3{--uc:#5046b8}.uc4{--uc:#d2691e}.uc5{--uc:#2e8b57}.uc6{--uc:#8a5a2b}.uc7{--uc:#6b7280}
 .st-unit{border:2px solid var(--uc);border-radius:12px;padding:6px 10px 2px;margin-top:14px;background:color-mix(in srgb,var(--uc) 12%,var(--card))}
 .st-unit>h3{margin-top:6px;color:color-mix(in srgb,var(--uc) 75%,var(--ink));border-bottom-color:var(--uc)}
 .st-ub{font-size:.72rem;border:1px solid var(--uc);background:color-mix(in srgb,var(--uc) 14%,var(--card));color:color-mix(in srgb,var(--uc) 75%,var(--ink));border-radius:6px;padding:0 8px;line-height:1.6;white-space:nowrap}
@@ -584,7 +584,7 @@ db.collection("folders").onSnapshot(function(s){items=s.docs.map(function(d){ret
 <script>
 (function(){
 var LV=["總指揮","分項指揮","分項小組長","隊員"];
-var UNITS=[["特別任務",""],["高中生組","高中生安排、入座、合照等"],["電腦設備組","電腦、音控、計時"],["場內組","司儀、儀禮大使等"],["機動組",""],["攝影組",""],["場佈組",""],["其他","屬單一工作項目者"]];
+var UNITS=[["特別任務",""],["高中生組","高中生安排、入座、合照等"],["場內組","司儀、儀禮大使等"],["電腦設備組","電腦、音控、計時"],["機動組",""],["攝影組",""],["場佈組",""],["其他","屬單一工作項目者"]];
 var items=[],people=[],canW=true,db=null,ed=null,pe=null,cDel=false,pDel=false,view="person";
 try{var sv=localStorage.getItem("st-view");if(sv==="time"||sv==="person")view=sv}catch(e){}
 function g(id){return document.getElementById(id)}
