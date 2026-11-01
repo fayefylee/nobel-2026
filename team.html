@@ -174,6 +174,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .st-hd.edit,.st-row.edit{cursor:pointer}
 .st-name{font-weight:700;color:var(--lvc)}
 .st-rows{list-style:none;margin:6px 0 0;padding:0}
+.st-pt{margin-top:6px}
 .st-rows li{padding:6px 0;border-top:1px solid var(--line)}
 .st-rows li:first-child{border-top:0}
 .uc0{--uc:#c28a00}.uc1{--uc:#0f8b8d}.uc2{--uc:#5046b8}.uc3{--uc:#c2457a}.uc4{--uc:#d2691e}.uc5{--uc:#6b7280}.uc6{--uc:#2e8b57}.uc7{--uc:#8a5a2b}
@@ -249,6 +250,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <label class="f"><span>級別</span><select id="pg-level"><option>總指揮</option><option>分項指揮</option><option>分項小組長</option><option>隊員</option></select></label>
 <label class="f" id="pg-unit-wrap"><span>分項組別（隊員可不選，會跟隨所屬指揮）</span><select id="pg-unit"></select></label>
 <label class="f" id="pg-parent-wrap"><span>所屬分項指揮（小組長、隊員歸在該分項指揮下）</span><select id="pg-parent"></select></label>
+<label class="f"><span>工作項目</span><input type="text" id="pg-task" maxlength="200"></label>
+<label class="f"><span>備註</span><textarea id="pg-note" maxlength="400" style="min-height:60px"></textarea></label>
 <div class="ck-acts">
 <button type="button" class="danger l" id="pg-del" hidden>刪除人員</button>
 <button type="button" id="pg-cancel">取消</button>
@@ -611,9 +614,9 @@ var asg={};items.forEach(function(it){names(it.name).forEach(function(n){(asg[n]
 var seen={};
 function card(n,sub){seen[n]=1;var p=pmap[n],c=el("div","st-pc "+lvc(n)+(sub?" sub":"")),h=el("div","st-hd"+(canW?" edit":"")),nm=el("span","st-name",n);h.append(nm);
 if(p)h.append(el("span","st-badge "+lvc(n),p.level));else h.append(el("span","st-badge lvn","未分級"));
-if(canW)h.addEventListener("click",function(){openP(p||null,n)});c.append(h);
+if(canW)h.addEventListener("click",function(){openP(p||null,n)});c.append(h);var pt=p&&(p.task||p.note);if(pt){var tb=el("div","st-pt");if(p.task)tb.append(el("div","ck-t",p.task));if(p.note)tb.append(el("div","ck-note",p.note));c.append(tb)}
 var a=(asg[n]||[]).slice().sort(cmp);
-if(a.length){var ul=el("ul","st-rows");a.forEach(function(it){ul.append(row(it,false))});c.append(ul)}else c.append(el("div","ck-note","尚無分配的工作項目"));
+if(a.length){var ul=el("ul","st-rows");a.forEach(function(it){ul.append(row(it,false))});c.append(ul)}else if(!pt)c.append(el("div","ck-note","尚無分配的工作項目"));
 return c}
 function sec(title,n){var s=el("section","ck-sec"),h=el("h3",null,title);h.append(el("small",null,n+" 人"));s.append(h);return s}
 var bossP=people.filter(function(p){return p.level===LV[0]}).sort(pcmp);
@@ -659,11 +662,11 @@ people.filter(function(p){return p.level===LV[1]}).sort(pcmp).forEach(function(p
 function fillUnits(cur){var s=g("pg-unit"),seen={},ud={};s.textContent="";UNITS.forEach(function(u){ud[u[0]]=u[1]});var o0=el("option",null,"（未指定）");o0.value="";s.append(o0);UNITS.map(function(u){return u[0]}).concat(people.map(function(p){return p.unit||""}),[cur||""]).forEach(function(u){if(u&&!seen[u]){seen[u]=1;var o=el("option",null,u+(ud[u]?"（"+ud[u]+"）":""));o.value=u;s.append(o)}});s.value=cur||""}
 function togParent(){var v=g("pg-level").value;g("pg-parent-wrap").hidden=!(v===LV[2]||v===LV[3]);g("pg-unit-wrap").hidden=v===LV[0]}
 function openP(p,nm){pe=p||null;pDel=false;g("pgDlgT").textContent=p?"編輯人員":"新增人員";
-g("pg-name").value=p?p.name:(nm||"");fillUnits(p&&p.unit||"");g("pg-level").value=p?p.level:LV[3];fillParent(p&&p.parent||"");togParent();
+g("pg-name").value=p?p.name:(nm||"");fillUnits(p&&p.unit||"");g("pg-task").value=p&&p.task||"";g("pg-note").value=p&&p.note||"";g("pg-level").value=p?p.level:LV[3];fillParent(p&&p.parent||"");togParent();
 g("pg-del").hidden=!p;g("pg-del").textContent="刪除人員";g("pgDlg").showModal();g("pg-name").focus()}
 g("pg-level").addEventListener("change",togParent);
 g("pgForm").addEventListener("submit",async function(ev){ev.preventDefault();
-var d={name:g("pg-name").value.trim(),level:g("pg-level").value,unit:g("pg-level").value===LV[0]?"":g("pg-unit").value.trim(),parent:(g("pg-level").value===LV[2]||g("pg-level").value===LV[3])?g("pg-parent").value:""};
+var d={name:g("pg-name").value.trim(),level:g("pg-level").value,task:g("pg-task").value.trim(),note:g("pg-note").value.trim(),unit:g("pg-level").value===LV[0]?"":g("pg-unit").value.trim(),parent:(g("pg-level").value===LV[2]||g("pg-level").value===LV[3])?g("pg-parent").value:""};
 if(!d.name)return;
 g("pg-save").disabled=true;
 try{if(pe)await db.doc("people/"+pe.id).update(d);else await db.collection("people").add(Object.assign(d,{order:Date.now()}));g("pgDlg").close()}catch(e){g("pgDlg").close();err(e)}
