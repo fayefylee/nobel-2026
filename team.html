@@ -584,7 +584,7 @@ db.collection("folders").onSnapshot(function(s){items=s.docs.map(function(d){ret
 <script>
 (function(){
 var LV=["總指揮","分項指揮","分項小組長","隊員"];
-var UNITS=[["特別任務",""],["高中生組","高中生安排、入座、合照等"],["電腦設備組","電腦設置、音控、時間控制等"],["場內組","司儀、儀禮大使等"],["機動組",""],["攝影組",""],["場佈組",""],["其他","屬單一工作項目者"]];
+var UNITS=[["特別任務",""],["高中生組","高中生安排、入座、合照等"],["電腦設備組","電腦、音控、計時"],["場內組","司儀、儀禮大使等"],["機動組",""],["攝影組",""],["場佈組",""],["其他","屬單一工作項目者"]];
 var items=[],people=[],canW=true,db=null,ed=null,pe=null,cDel=false,pDel=false,view="person";
 try{var sv=localStorage.getItem("st-view");if(sv==="time"||sv==="person")view=sv}catch(e){}
 function g(id){return document.getElementById(id)}
