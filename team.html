@@ -285,6 +285,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <label class="f"><span>名稱</span><input type="text" id="fde-name" required maxlength="80" placeholder="例如：量子之間 興見未來展區資料"></label>
 <label class="f"><span>連結</span><input type="url" id="fde-url" required maxlength="600" placeholder="https://drive.google.com/drive/folders/…"></label>
 <label class="f"><span>說明（選填）</span><input type="text" id="fde-note" maxlength="200"></label>
+<label class="f"><span>顯示於</span><select id="fde-vis"><option value="team">僅工作人員版</option><option value="boss">僅長官版</option><option value="both">兩版皆顯示</option></select></label>
 <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="fde-pin" style="width:auto"> 固定在列表最下方</label>
 <div class="ck-status" id="fdeErr"></div>
 <div class="ck-acts">
@@ -558,15 +559,15 @@ if(!items.length){L.append(el("div","empty",canW?"還沒有資料夾。按「新
 var ul=el("ul","fd-ul");
 items.slice().sort(function(a,b){return(!!a.pinBottom-!!b.pinBottom)||((a.order||0)-(b.order||0))}).forEach(function(it){
 var li=el("li","fd-li"+(it.pinBottom?" pin":"")),b=el("div","fd-b"),a=el("a",null,it.name);a.href=it.url;a.target="_blank";a.rel="noopener";b.append(a);
-var h=host(it.url);b.append(el("div","fd-host",(it.note?it.note+" · ":"")+h));
+var h=host(it.url);b.append(el("div","fd-host",(it.note?it.note+" · ":"")+h+(canW&&it.vis&&it.vis!=="team"?" · "+(it.vis==="boss"?"僅長官版":"兩版皆顯示"):"")));
 li.append(el("span","fd-ico"),b);
 if(canW){var e=el("button",null,"編輯");e.type="button";e.addEventListener("click",function(){openEd(it)});li.append(e)}
 ul.append(li)});L.append(ul)}
 function err(e){if(e&&e.code==="invalid_argument"){canW=false;render();g("fdStatus").textContent="你目前只有查閱權限，無法修改。"}else g("fdStatus").textContent="儲存失敗，請稍後再試。"+(e&&e.code?"（"+e.code+"）":"")}
-function openEd(it){ed=it||null;cDel=false;g("fdDlgT").textContent=it?"編輯資料夾":"新增資料夾";g("fde-name").value=it?it.name:"";g("fde-url").value=it?it.url:"";g("fde-note").value=it&&it.note||"";g("fde-pin").checked=!!(it&&it.pinBottom);
+function openEd(it){ed=it||null;cDel=false;g("fdDlgT").textContent=it?"編輯資料夾":"新增資料夾";g("fde-name").value=it?it.name:"";g("fde-url").value=it?it.url:"";g("fde-note").value=it&&it.note||"";g("fde-pin").checked=!!(it&&it.pinBottom);g("fde-vis").value=it&&it.vis||"team";
 g("fdeErr").textContent="";g("fde-del").hidden=!it;g("fde-del").textContent="刪除";g("fdDlg").showModal();g("fde-name").focus()}
 g("fdForm").addEventListener("submit",async function(ev){ev.preventDefault();
-var d={name:g("fde-name").value.trim(),url:g("fde-url").value.trim(),note:g("fde-note").value.trim(),pinBottom:g("fde-pin").checked};
+var d={name:g("fde-name").value.trim(),url:g("fde-url").value.trim(),note:g("fde-note").value.trim(),pinBottom:g("fde-pin").checked,vis:g("fde-vis").value};
 if(!/^https:\/\//i.test(d.url)){g("fdeErr").textContent="連結需以 https:// 開頭。";return}
 g("fde-save").disabled=true;
 try{if(ed)await db.doc("folders/"+ed.id).update(d);else await db.collection("folders").add(Object.assign(d,{order:Date.now()}));g("fdDlg").close()}catch(e){g("fdDlg").close();err(e)}
@@ -697,7 +698,8 @@ function g(id){return document.getElementById(id)}
 function stable(v){if(Array.isArray(v))return"["+v.map(stable).join(",")+"]";if(v&&typeof v==="object")return"{"+Object.keys(v).sort().filter(function(k){return v[k]!==undefined}).map(function(k){return JSON.stringify(k)+":"+stable(v[k])}).join(",")+"}";return JSON.stringify(v)}
 function byId(a){return(a||[]).slice().sort(function(x,y){return x.id<y.id?-1:1})}
 function differs(){var S=window.SNAP||{};return stable(live.schedule)!==stable(S.schedule)||stable(byId(live.tasks))!==stable(byId(S.tasks))||stable(byId(live.folders))!==stable(byId(S.folders))||stable(byId(live.staff))!==stable(byId(S.staff))||stable(byId(live.people))!==stable(byId(S.people))}
-function hashLive(boss){var s=stable({schedule:live.schedule,tasks:byId(live.tasks),folders:boss?[]:byId(live.folders),staff:byId(live.staff),people:byId(live.people)}),h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
+function fvis(boss){return live.folders.filter(function(f){return boss?(f.vis==="boss"||f.vis==="both"):f.vis!=="boss"})}
+function hashLive(boss){var s=stable({schedule:live.schedule,tasks:byId(live.tasks),folders:byId(fvis(boss)),staff:byId(live.staff),people:byId(live.people)}),h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 function check(){if(dismissed||busy||!live.schedule||!live.tasks||!live.folders||!live.staff||!live.people||webMeta===undefined)return;
 var d=differs(),wb=!webMeta||webMeta.hashBoss!==hashLive(true),wt=!webMeta||webMeta.hashTeam!==hashLive(false),w=wb||wt;
 g("pubBar").hidden=!(d||w);g("pubGo").hidden=!d;g("webGoBoss").hidden=!wb;g("webGoTeam").hidden=!wt;
@@ -728,7 +730,7 @@ if(!live.schedule||!live.tasks||!live.folders||!live.staff||!live.people){toast2
 var fn=boss?"index.html":"team.html";
 try{if(!dlns)dlns=await window.claude.use("downloads");if(!dlns){toast2("此環境無法下載。");return}
 var tpl=b64dec(g("pagesrc").textContent);
-var snap={schedule:live.schedule,tasks:byId(live.tasks),folders:boss?[]:byId(live.folders),staff:byId(live.staff),people:byId(live.people),at:stamp()};if(boss)snap.hideFiles=true;
+var snap={schedule:live.schedule,tasks:byId(live.tasks),folders:byId(fvis(boss)),staff:byId(live.staff),people:byId(live.people),at:stamp()};if(boss&&!snap.folders.length)snap.hideFiles=true;
 var js="var SNAP="+JSON.stringify(snap).replace(/<\//g,"<\\/")+";var DEFAULT=SNAP.schedule;";
 var page=tpl.split(K1).join(js).split(K2).join("");
 var doc='<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"></head><body>'+page+'</body></html>';
