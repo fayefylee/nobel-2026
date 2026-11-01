@@ -245,7 +245,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <h3 id="pgDlgT">新增人員</h3>
 <label class="f"><span>姓名</span><input type="text" id="pg-name" required maxlength="40"></label>
 <label class="f"><span>級別</span><select id="pg-level"><option>總指揮</option><option>分項指揮</option><option>分項小組長</option><option>隊員</option></select></label>
-<label class="f" id="pg-unit-wrap"><span>分項名稱（可選或自行輸入；隊員可留空，會跟隨所屬指揮）</span><input type="text" id="pg-unit" list="pg-units" maxlength="40" placeholder="例如：場內組"><datalist id="pg-units"></datalist></label>
+<label class="f" id="pg-unit-wrap"><span>分項組別（隊員可不選，會跟隨所屬指揮）</span><select id="pg-unit"></select></label>
 <label class="f" id="pg-parent-wrap"><span>所屬分項指揮（小組長、隊員歸在該分項指揮下）</span><select id="pg-parent"></select></label>
 <div class="ck-acts">
 <button type="button" class="danger l" id="pg-del" hidden>刪除人員</button>
@@ -654,10 +654,10 @@ try{await db.doc("staff/"+ed.id).delete();g("stDlg").close()}catch(e){g("stDlg")
 g("stAdd").addEventListener("click",function(){openEd(null)});
 function fillParent(sel){var s=g("pg-parent");s.textContent="";var o=el("option",null,"（無）");o.value="";s.append(o);
 people.filter(function(p){return p.level===LV[1]}).sort(pcmp).forEach(function(p){var o2=el("option",null,p.name);o2.value=p.name;s.append(o2)});s.value=sel||""}
-function fillUnits(){var dl=g("pg-units");dl.textContent="";var seen={};UNITS.map(function(u){return u[0]}).concat(people.map(function(p){return p.unit||""})).forEach(function(u){if(u&&!seen[u]){seen[u]=1;var o=el("option");o.value=u;dl.append(o)}})}
+function fillUnits(cur){var s=g("pg-unit"),seen={},ud={};s.textContent="";UNITS.forEach(function(u){ud[u[0]]=u[1]});var o0=el("option",null,"（未指定）");o0.value="";s.append(o0);UNITS.map(function(u){return u[0]}).concat(people.map(function(p){return p.unit||""}),[cur||""]).forEach(function(u){if(u&&!seen[u]){seen[u]=1;var o=el("option",null,u+(ud[u]?"（"+ud[u]+"）":""));o.value=u;s.append(o)}});s.value=cur||""}
 function togParent(){var v=g("pg-level").value;g("pg-parent-wrap").hidden=!(v===LV[2]||v===LV[3]);g("pg-unit-wrap").hidden=v===LV[0]}
 function openP(p,nm){pe=p||null;pDel=false;g("pgDlgT").textContent=p?"編輯人員":"新增人員";
-g("pg-name").value=p?p.name:(nm||"");g("pg-unit").value=p&&p.unit||"";fillUnits();g("pg-level").value=p?p.level:LV[3];fillParent(p&&p.parent||"");togParent();
+g("pg-name").value=p?p.name:(nm||"");fillUnits(p&&p.unit||"");g("pg-level").value=p?p.level:LV[3];fillParent(p&&p.parent||"");togParent();
 g("pg-del").hidden=!p;g("pg-del").textContent="刪除人員";g("pgDlg").showModal();g("pg-name").focus()}
 g("pg-level").addEventListener("change",togParent);
 g("pgForm").addEventListener("submit",async function(ev){ev.preventDefault();
