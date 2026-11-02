@@ -386,9 +386,10 @@ function toHtml(){var css=$("css").textContent,b='<h1>'+esc(S.title)+'</h1><div 
 S.days.forEach(function(d){var m=meta(d.date);b+='<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'')+'<div>'+(d.items.length?d.items.map(itemHtml).join(""):'<div class="empty">尚未排定行程</div>')+'</div>'});
 b+=todoHtml()+'<div class="upd">最後更新 '+esc(S.upd)+'</div>';
 return'<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+esc(S.title)+'</title><style>'+css+'</style></head><body><div class="wrap"><div class="card">'+b+'</div></div></body></html>'}
-function docBody(only){var one=typeof only==="number"&&S.days[only],b='<h1>'+esc(one&&one.title||S.title)+'</h1><div class="people">'+peopleHtml()+'</div>';
-(one?[one]:S.days).forEach(function(d){var m=meta(d.date);b+='<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'')+'<div>'+(d.items.length?d.items.map(itemHtml).join(""):'<div class="empty">尚未排定行程</div>')+'</div>'});
+function docBody(only){var one=typeof only==="number"&&S.days[only],b=(one&&one.banner?bnr():'<h1>'+esc(one&&one.title||S.title)+'</h1>')+'<div class="people">'+peopleHtml()+'</div>';
+(one?[one]:S.days).forEach(function(d){var m=meta(d.date);b+=(!one&&d.banner?bnr():'')+'<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'')+'<div>'+(d.items.length?d.items.map(itemHtml).join(""):'<div class="empty">尚未排定行程</div>')+'</div>'});
 return b+todoHtml()+'<div class="upd">最後更新 '+esc(S.upd)+'</div>'}
+function bnr(){return'<img src="'+POSTER+'" style="display:block;width:100%;max-width:640px;height:auto;border-radius:10px;margin:0 auto 12px">'}
 function loadJs(u){return new Promise(function(ok,no){var s=document.createElement("script");s.src=u;s.onload=ok;s.onerror=function(){no(new Error("load"))};document.head.appendChild(s)})}
 var pdfBusy=false;
 async function makePdfLand(only){
@@ -401,13 +402,13 @@ var SC=2,HW=1100,PX=18,PY=14,GAP=22,CW=Math.floor((HW-2*PX-GAP)/2);
 function mk(html){var h=document.createElement("div");h.className="pdfhost cp";h.style.width=HW+"px";h.innerHTML=html;document.body.appendChild(h);hosts.push(h);return h}
 function rm(h){h.remove();var k=hosts.indexOf(h);if(k>=0)hosts.splice(k,1)}
 var one=typeof only==="number"&&S.days[only],days=one?[one]:S.days;
-var topHtml='<h1>'+esc(one&&one.title||S.title)+'</h1><div class="people">'+peopleHtml()+'</div>';
+var topHtml=(one&&one.banner?bnr():'<h1>'+esc(one&&one.title||S.title)+'</h1>')+'<div class="people">'+peopleHtml()+'</div>';
 var tailHtml=todoHtml()+'<div class="upd">最後更新 '+esc(S.upd)+'</div>';
 var wrap='<div class="card" style="padding:'+PY+'px '+PX+'px;display:flow-root">';
 var pdf=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"landscape"}),firstPdf=true;
 for(var di=0;di<days.length;di++){
 var d=days[di],m=meta(d.date),last=di===days.length-1;
-var dhh='<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'');
+var dhh=(!one&&d.banner?bnr():'')+'<h2 class="dh">'+esc(m.label)+(d.info?'｜'+esc(d.info):'')+'</h2>'+(d.title?'<div class="meta">'+esc(d.title)+'</div>':'');
 var its=d.items||[],hs=[];
 if(its.length){var hm=mk(wrap+'<div style="width:'+CW+'px">'+its.map(itemHtml).join("")+'</div></div>');hm.querySelectorAll(".item").forEach(function(e){hs.push(e.getBoundingClientRect().height)});rm(hm)}
 var best=0,bm=1e12;
